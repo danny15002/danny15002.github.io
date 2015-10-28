@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body style="background:gray">
+    <h1> A$$teroids </h1>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.3/jquery.js"></script>
+    <script src="keymaster.js"></script>
+    <!-- then load our own app.js code -->
+    <script src="lib/Game.js"></script>
+    <canvas style="display:block;margin:auto;background:black" width="700" height="700" id="canvas"></canvas>
+    <script src="lib/Utils.js"></script>
+    <script src="lib/MovingObject.js"></script>
+    <script src="lib/gameView.js"></script>
+    <script src="lib/Asteroid.js"></script>
+    <script src="lib/Ship.js"></script>
+    <script src="lib/Bullet.js"></script>
+    <script>
+     var canvasEl = document.getElementsByTagName("canvas")[0];
+    //  canvasEl.height = window.outerHeight;
+    //  canvasEl.width = window.outerWidth;
+     new Asteroids.GameView(canvasEl).start(canvasEl);
+   </script>
+
+  </body>
+</html>
