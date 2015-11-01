@@ -10,8 +10,9 @@
     this.color = "red";
     this.radius = 20;
     this.angularSpeed = 0;
-    this.angle = 0;
+    this.angle = Math.PI/2;
     this.thrust = false;
+    this.triAngle = Math.atan(3);
 
   };
   Utils.inherits(Ship, window.Asteroids.MovingObject);
@@ -22,13 +23,13 @@
     var vel = [-this.vel*Math.sin(this.angle), this.vel*Math.cos(this.angle)];
 
     this.angle += this.angularSpeed;
-    if (this.angle > 2*Math.PI || this.angle < -2*Math.PI){
-      this.angle = this.angle % (2 * Math.PI);
-    }
+    // if (this.angle > 2*Math.PI || this.angle < -2*Math.PI){
+    //   this.angle = this.angle % (2 * Math.PI);
+    // }
     this.pos[0] += vel[0];
     this.pos[1] += vel[1];
     this.game.wrap(this.pos);
-    if (this.vel > 0) {this.vel -= .01;}
+    if (this.vel < 0) {this.vel += .06;}
     if (this.angularSpeed > 0) {
       changed = true;
       this.angularSpeed -= .005;
@@ -50,16 +51,16 @@
     // y + 3 = -x - 1 and y + 3 = x - 1
     // -x - 1 = x - 1 ===>  x = 0, y = 4
 
-    startPoint = [ x + (0 - (48)*Math.sin(this.angle)),
-                   y + (0 + (48)*Math.cos(this.angle))]
-    movePoint2 = [ x + ((-18)*Math.cos(this.angle) - (-6)*Math.sin(this.angle)),
-                   y + ((-18)*Math.sin(this.angle) + (-6)*Math.cos(this.angle))]
-    movePoint3 = [ x + ((24)*Math.cos(this.angle) - (-24)*Math.sin(this.angle)),
-                   y + ((24)*Math.sin(this.angle) + (-24)*Math.cos(this.angle))]
-    drawPoint1 = [ x + ((-24)*Math.cos(this.angle) - (-24)*Math.sin(this.angle)),
-                   y + ((-24)*Math.sin(this.angle) + (-24)*Math.cos(this.angle))]
-    drawPoint2 = [ x + ((18)*Math.cos(this.angle) - (-6)*Math.sin(this.angle)),
-                   y + ((18)*Math.sin(this.angle) + (-6)*Math.cos(this.angle))]
+    startPoint = [ x - (0 - (48)*Math.sin(this.angle)),
+                   y - (0 + (48)*Math.cos(this.angle))]
+    movePoint2 = [ x - ((-18)*Math.cos(this.angle) - (-6)*Math.sin(this.angle)),
+                   y - ((-18)*Math.sin(this.angle) + (-6)*Math.cos(this.angle))]
+    movePoint3 = [ x - ((24)*Math.cos(this.angle) - (-24)*Math.sin(this.angle)),
+                   y - ((24)*Math.sin(this.angle) + (-24)*Math.cos(this.angle))]
+    drawPoint1 = [ x - ((-24)*Math.cos(this.angle) - (-24)*Math.sin(this.angle)),
+                   y - ((-24)*Math.sin(this.angle) + (-24)*Math.cos(this.angle))]
+    drawPoint2 = [ x - ((18)*Math.cos(this.angle) - (-6)*Math.sin(this.angle)),
+                   y - ((18)*Math.sin(this.angle) + (-6)*Math.cos(this.angle))]
 
     ctx.beginPath();
     ctx.moveTo( startPoint[0], startPoint[1]); // position
@@ -73,12 +74,12 @@
     ctx.stroke();
 
 
-    thrustStart = [ x + ((-12)*Math.cos(this.angle) - (-18)*Math.sin(this.angle)),
-                    y + ((-12)*Math.sin(this.angle) + (-18)*Math.cos(this.angle))]
-    thrustMove  = [ x + ((0)*Math.cos(this.angle) - (-36)*Math.sin(this.angle)),
-                    y + ((0)*Math.sin(this.angle) + (-36)*Math.cos(this.angle))]
-    thrustEnd   = [ x + ((12)*Math.cos(this.angle) - (-18)*Math.sin(this.angle)),
-                    y + ((12)*Math.sin(this.angle) + (-18)*Math.cos(this.angle))]
+    thrustStart = [ x - ((-12)*Math.cos(this.angle) - (-18)*Math.sin(this.angle)),
+                    y - ((-12)*Math.sin(this.angle) + (-18)*Math.cos(this.angle))]
+    thrustMove  = [ x - ((0)*Math.cos(this.angle) - (-36)*Math.sin(this.angle)),
+                    y - ((0)*Math.sin(this.angle) + (-36)*Math.cos(this.angle))]
+    thrustEnd   = [ x - ((12)*Math.cos(this.angle) - (-18)*Math.sin(this.angle)),
+                    y - ((12)*Math.sin(this.angle) + (-18)*Math.cos(this.angle))]
 
     ctx.beginPath();
     ctx.moveTo( thrustStart[0], thrustStart[1]); // position
@@ -86,7 +87,7 @@
     ctx.lineTo( thrustEnd[0], thrustEnd[1]); // draw point 2
 
     var color = "black"
-    if (this.thrust && (this.vel > 0)) {
+    if (this.thrust && (this.vel < 0)) {
       color = "orange"
     }
     this.thrust = !this.thrust;
@@ -101,21 +102,37 @@
     // console.log("poop pants");
     switch(dir) {
       case 'w':
-          this.vel += .5;
+          this.vel -= .9;
           break;
       case 'a':
-          this.angularSpeed -= .06;
-          if (this.vel < 0) {this.vel += .1;}
+          this.angularSpeed -= .05;
+          if (this.vel < 0) {this.vel += .05;}
           break;
       case 'd':
-          this.angularSpeed += .06;
-          if (this.vel > 0) {this.vel -= .1;}
+          this.angularSpeed += .05;
+          if (this.vel > 0) {this.vel -= .05;}
           break;
       }
 
-      if (this.vel > 5) { this.vel = 5; }
+      if (this.vel < -6) { this.vel = -6; }
       if (this.angularSpeed < -.15) {this.angularSpeed = -.15}
       if (this.angularSpeed > .15) {this.angularSpeed = .15}
+  }
+
+  Ship.prototype.setInt = function(interval) {
+    this.interval = interval;
+  }
+
+  Ship.prototype.collideCalc = function (asteroid) {
+
+    if (this.distance(asteroid.pos) < (30 + asteroid.radius)) {
+      window.clearInterval(this.interval);
+
+      window.alert("you lose");
+      new Asteroids.GameView(canvasEl).start(canvasEl);
+      return;
+    }
+
   }
 
 })();

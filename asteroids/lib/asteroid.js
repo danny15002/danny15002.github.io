@@ -6,10 +6,17 @@
     Asteroids.MovingObject.call(this, {game: game});
 
     this.color = "blue";
-    this.radius = 30;
-    this.pos = [Utils.getRandomInt(0,800), Utils.getRandomInt(0,600)];
-    this.vel = [Utils.getRandomInt(-17,17)/6, Utils.getRandomInt(-17,17)/6];
+    this.radius = 50;
+    this.pos = [Utils.getRandomInt(0,200), Utils.getRandomInt(0,700)];
+    this.vel = [Utils.getRandomInt(-12,12)/6, Utils.getRandomInt(-12,12)/6];
   };
 
   Utils.inherits(Asteroid, window.Asteroids.MovingObject);
+
+  Asteroid.prototype.isDestroyed = function (otherMovingObject) {
+    if ((this.radius + otherMovingObject.radius) > this.distance(otherMovingObject.pos)) {
+      return true;
+    }
+    return false
+  };
 })();

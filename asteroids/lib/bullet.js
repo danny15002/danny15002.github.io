@@ -6,15 +6,15 @@
   var Bullet = window.Asteroids.Bullet = function (pos, angle, game) {
     this.pos = pos;
     this.angle = angle;
-    this.vel = 1;
+    this.vel = -10;
     this.game = game;
+    this.radius = 5;
   };
   Utils.inherits(Bullet, window.Asteroids.MovingObject);
 
   Bullet.prototype.move = function () {
 
     var vel = [-this.vel*Math.sin(this.angle), this.vel*Math.cos(this.angle)];
-    console.log('mvoing bullet')
     this.pos[0] += vel[0];
     this.pos[1] += vel[1];
     this.game.wrap(this.pos);
