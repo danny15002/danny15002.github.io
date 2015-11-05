@@ -99,7 +99,6 @@
 
   Ship.prototype.moveShip = function(dir) {
     // TODO: give instructions, turn with a, d. go forward with w
-    // console.log("poop pants");
     switch(dir) {
       case 'w':
           this.vel -= .9;

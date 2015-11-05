@@ -6,9 +6,8 @@
   var Game = window.Asteroids.Game = function (canvasEl) {
     this.DIM_X = canvasEl.height;
     this.DIM_Y = canvasEl.width;
-    this.NUM_ASTEROIDS = 10;
+    this.NUM_ASTEROIDS = 8;
     this.asteroids = [];
-    this.asteroids.push(new window.Asteroids.Asteroid(this)) // TODO: remove
     this.addAsteroids();
     this.ship = this.createShip();
     this.bindEvent();
@@ -56,8 +55,8 @@
 
     addAsteroids: function() {
       for (var i = 0; i < this.NUM_ASTEROIDS; i++) {
-
-      this.asteroids.push(new window.Asteroids.Asteroid(this));
+        this.asteroids.push(new window.Asteroids.Asteroid(this, [110*i, 0]));
+        this.asteroids.push(new window.Asteroids.Asteroid(this, [0, 110*i]));
       }
     },
 
@@ -108,8 +107,7 @@
 
       for (var i = this.bullets.length - 1; i >= 0; i--) {
         bullet = this.bullets[i];
-          console.log(bullet)
-        if (bullet.pos[0] < 0 || bullet.pos[0] > 600 || bullet.pos[1] < 0 || bullet.pos[1] > 600) {
+        if (bullet.pos[0] < 0 || bullet.pos[0] > 680 || bullet.pos[1] < 0 || bullet.pos[1] > 680) {
           this.bullets.splice(i,1)
         }
       }
