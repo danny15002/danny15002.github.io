@@ -418,4 +418,3 @@ class TwentyOneGoldGame {
   }
 }
 
-module.exports = TwentyOneGoldGame;
