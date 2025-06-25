@@ -65,7 +65,7 @@ class TwentyOneGoldGame {
   }
 
   drawNextCard() {
-    if (this.deckPosition >= this.deck.length) {
+    if (this.deckPosition >= this.deck.length && !this.heldCard) {
       this.endGame(true);
       return null;
     }
@@ -375,6 +375,11 @@ class TwentyOneGoldGame {
       this.score += 350;
       this.scoringLog.push("No-bust bonus: +350");
     }
+
+    if (this.columnCards.every((col) => col.length === 0)) {
+      this.score += 1000;
+      this.scoringLog.push("All columns cleared: +1000");
+    }
   }
 
   getGameState() {
@@ -413,4 +418,4 @@ class TwentyOneGoldGame {
   }
 }
 
-// module.exports = TwentyOneGoldGame;
+module.exports = TwentyOneGoldGame;
