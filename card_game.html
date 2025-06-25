@@ -1,1139 +1,1229 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <title>21 Gold Mobile</title>
     <script src="GameEngine.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            background: #0a0a0a;
-            color: white;
-            min-height: 100vh;
-            min-height: -webkit-fill-available;
-            overflow-x: hidden;
-            overflow-y: auto;
-            width: 100%;
-        }
-
-        html {
-            height: -webkit-fill-available;
-        }
-
-        .app {
-            min-height: 100vh;
-            min-height: -webkit-fill-available;
-            display: flex;
-            flex-direction: column;
-            padding-bottom: 1px; /* Allows minimal scroll to hide URL bar */
-        }
-
-        /* Header */
-        .header {
-            background: #1a1a1a;
-            padding: 12px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-        }
-
-        .header h1 {
-            font-size: 24px;
-            font-weight: 600;
-        }
-
-        .menu-button {
-            background: #333;
-            border: none;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 500;
-        }
-
-        .recording-badge {
-            background: #ff3838;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
-            animation: pulse 2s infinite;
-            margin-right: 12px;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
-
-        /* Game Info Bar */
-        .info-bar {
-            background: #1a1a1a;
-            padding: 12px 16px;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-        }
-
-        .info-item {
-            text-align: center;
-            background: #262626;
-            padding: 8px;
-            border-radius: 8px;
-        }
-
-        .info-label {
-            font-size: 12px;
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .info-value {
-            font-size: 24px;
-            font-weight: bold;
-            margin-top: 4px;
-        }
-
-        .score-value { color: #4ade80; }
-        .bust-value { color: #f87171; }
-        .cards-value { color: #60a5fa; }
-
-        /* Cards Section */
-        .cards-section {
-            background: #141414;
-            padding: 16px;
-        }
-
-        .current-card {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            padding: 24px;
-            border-radius: 16px;
-            text-align: center;
-            margin-bottom: 16px;
-            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
-        }
-
-        .card-label {
-            font-size: 14px;
-            opacity: 0.9;
-            margin-bottom: 8px;
-        }
-
-        .card-value {
-            font-size: 36px;
-            font-weight: bold;
-        }
-
-        .held-card {
-            background: #374151;
-            padding: 20px;
-            border-radius: 16px;
-            text-align: center;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .held-card.has-card {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
-        }
-
-        .held-card.active {
-            transform: scale(1.05);
-            box-shadow: 0 12px 30px rgba(245, 158, 11, 0.5);
-        }
-
-        /* Action Buttons */
-        .action-buttons {
-            padding: 16px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            background: #0a0a0a;
-        }
-
-        .action-btn {
-            background: #374151;
-            border: none;
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: bold;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .action-btn:active:not(:disabled) {
-            transform: scale(0.95);
-        }
-
-        .action-btn:disabled {
-            opacity: 0.3;
-        }
-
-        .hold-btn {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-        }
-
-        .undo-btn {
-            background: linear-gradient(135deg, #6366f1, #4f46e5);
-        }
-
-        /* Game Board */
-        .game-board {
-            flex: 1;
-            padding: 16px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr 1fr;
-            gap: 16px;
-            overflow: hidden;
-        }
-
-        .column {
-            background: #1a1a1a;
-            border: 3px solid #333;
-            border-radius: 16px;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            transition: all 0.2s ease;
-        }
-
-        .column:active {
-            transform: scale(0.98);
-        }
-
-        .column.can-play {
-            border-color: #4ade80;
-            background: #14532d;
-        }
-
-        .column.bust {
-            border-color: #ef4444;
-            background: #450a0a;
-        }
-
-        .column.for-held {
-            border-color: #f59e0b;
-            background: #451a03;
-        }
-
-        .column-header {
-            text-align: center;
-            margin-bottom: 12px;
-        }
-
-        .column-number {
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .column-total {
-            font-size: 14px;
-            color: #888;
-        }
-
-        .column-cards {
-            flex: 1;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            align-content: flex-start;
-        }
-
-        .playing-card {
-            background: white;
-            color: black;
-            width: 32px;
-            height: 44px;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 14px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .playing-card.wild {
-            background: linear-gradient(135deg, #fbbf24, #f59e0b);
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.9);
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background: #1a1a1a;
-            margin: 20px;
-            padding: 24px;
-            border-radius: 16px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .modal-header h2 {
-            font-size: 28px;
-        }
-
-        .close-button {
-            background: #374151;
-            border: none;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .menu-options {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .menu-option {
-            background: #262626;
-            border: none;
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            font-size: 18px;
-            text-align: left;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .menu-option:active {
-            background: #333;
-        }
-
-        .menu-option.primary {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-        }
-
-        .menu-option.success {
-            background: linear-gradient(135deg, #4ade80, #22c55e);
-        }
-
-        .menu-icon {
-            font-size: 24px;
-        }
-
-        /* Recordings List */
-        .recordings-section {
-            margin-top: 24px;
-        }
-
-        .recordings-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 16px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .recording-item {
-            background: #262626;
-            padding: 16px;
-            border-radius: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .recording-score {
-            font-size: 24px;
-            font-weight: bold;
-            color: #4ade80;
-        }
-
-        .recording-details {
-            font-size: 14px;
-            color: #888;
-            margin-top: 4px;
-        }
-
-        .delete-button {
-            background: #ef4444;
-            border: none;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        /* Game Over */
-        .game-over {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #1a1a1a;
-            padding: 32px;
-            border-radius: 20px;
-            text-align: center;
-            z-index: 2000;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
-        }
-
-        .game-over h2 {
-            font-size: 36px;
-            margin-bottom: 24px;
-        }
-
-        .final-score {
-            font-size: 64px;
-            font-weight: bold;
-            color: #4ade80;
-            margin-bottom: 24px;
-        }
-
-        .game-over-buttons {
-            display: flex;
-            gap: 16px;
-        }
-
-        .game-over-btn {
-            flex: 1;
-            padding: 16px;
-            border: none;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: bold;
-            color: white;
-        }
-
-        .new-game-btn {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-        }
-
-        .menu-btn {
-            background: #374151;
-        }
-
-        /* Floating Score */
-        .floating-score {
-            position: fixed;
-            font-size: 32px;
-            font-weight: bold;
-            color: #4ade80;
-            pointer-events: none;
-            animation: float-up 2s ease-out forwards;
-            z-index: 3000;
-        }
-
-        @keyframes float-up {
-            0% {
-                opacity: 1;
-                transform: translate(-50%, 0);
-            }
-            100% {
-                opacity: 0;
-                transform: translate(-50%, -100px);
-            }
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Arial, sans-serif;
+        background: #0a0a0a;
+        color: white;
+        height: 100vh;
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+      }
+
+      .app {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Header */
+      .header {
+        background: #1a1a1a;
+        padding: 12px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      }
+
+      .header h1 {
+        font-size: 24px;
+        font-weight: 600;
+      }
+
+      .menu-button {
+        background: #333;
+        border: none;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 500;
+      }
+
+      .recording-badge {
+        background: #ff3838;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: bold;
+        animation: pulse 2s infinite;
+        margin-right: 12px;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.6;
+        }
+      }
+
+      /* Game Info Bar */
+      .info-bar {
+        background: #1a1a1a;
+        padding: 12px 16px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+
+      .info-item {
+        text-align: center;
+        background: #262626;
+        padding: 8px;
+        border-radius: 8px;
+      }
+
+      .info-label {
+        font-size: 12px;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .info-value {
+        font-size: 24px;
+        font-weight: bold;
+        margin-top: 4px;
+      }
+
+      .score-value {
+        color: #4ade80;
+      }
+      .bust-value {
+        color: #f87171;
+      }
+      .cards-value {
+        color: #60a5fa;
+      }
+
+      /* Cards Section */
+      .cards-section {
+        background: #141414;
+        display: flex;
+        justify-content: space-around;
+        padding: 16px;
+      }
+
+      .cards-section > div {
+        height: 130px;
+        width: 150px;
+      }
+
+      .current-card {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        padding: 24px;
+        border-radius: 16px;
+        text-align: center;
+        margin-bottom: 16px;
+        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+      }
+
+      .card-label {
+        font-size: 14px;
+        opacity: 0.9;
+        margin-bottom: 8px;
+      }
+
+      .card-value {
+        font-size: 36px;
+        font-weight: bold;
+      }
+
+      .held-card {
+        background: #374151;
+        padding: 20px;
+        border-radius: 16px;
+        text-align: center;
+        position: relative;
+        transition: all 0.3s ease;
+      }
+
+      .held-card.has-card {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+      }
+
+      .held-card.active {
+        transform: scale(1.05);
+        box-shadow: 0 12px 30px rgba(245, 158, 11, 0.5);
+      }
+
+      /* Action Buttons */
+      .action-buttons {
+        padding: 16px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        background: #0a0a0a;
+      }
+
+      .action-btn {
+        background: #374151;
+        border: none;
+        color: white;
+        padding: 20px;
+        border-radius: 12px;
+        font-size: 18px;
+        font-weight: bold;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .action-btn:active:not(:disabled) {
+        transform: scale(0.95);
+      }
+
+      .action-btn:disabled {
+        opacity: 0.3;
+      }
+
+      .hold-btn {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+      }
+
+      .undo-btn {
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+      }
+
+      /* Game Board */
+      .game-board {
+        flex: 1;
+        padding: 16px;
+        display: flex;
+        justify-content: space-around;
+        max-height: 50%;
+        overflow: hidden;
+      }
+
+      .column {
+        background: #1a1a1a;
+        border: 3px solid #333;
+        border-radius: 16px;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        transition: all 0.2s ease;
+        width: 23%;
+      }
+
+      .column:active {
+        transform: scale(0.98);
+      }
+
+      .column.can-play {
+        border-color: #4ade80;
+        background: #14532d;
+      }
+
+      .column.bust {
+        border-color: #ef4444;
+        background: #450a0a;
+      }
+
+      .column.for-held {
+        border-color: #f59e0b;
+        background: #451a03;
+      }
+
+      .column-header {
+        text-align: center;
+        margin-bottom: 12px;
+      }
+
+      .column-number {
+        display: none;
+        color: lightgray;
+      }
+
+      .column-total {
+        font-size: 29px;
+        color: white;
+        font-weight: bold;
+        text-align: center;
+      }
+
+      .column-cards {
+        flex: 1;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        gap: 4px;
+        align-content: center;
+      }
+
+      .playing-card {
+        background: white;
+        color: black;
+        width: 32px;
+        height: 44px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 14px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .playing-card.wild {
+        background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      }
+
+      /* Modal */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 1000;
+      }
+
+      .modal-content {
+        background: #1a1a1a;
+        margin: 20px;
+        padding: 24px;
+        border-radius: 16px;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+
+      .modal-header h2 {
+        font-size: 28px;
+      }
+
+      .close-button {
+        background: #374151;
+        border: none;
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .menu-options {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .menu-option {
+        background: #262626;
+        border: none;
+        color: white;
+        padding: 20px;
+        border-radius: 12px;
+        font-size: 18px;
+        text-align: left;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .menu-option:active {
+        background: #333;
+      }
+
+      .menu-option.primary {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+      }
+
+      .menu-option.success {
+        background: linear-gradient(135deg, #4ade80, #22c55e);
+      }
+
+      .menu-icon {
+        font-size: 24px;
+      }
+
+      /* Recordings List */
+      .recordings-section {
+        margin-top: 24px;
+      }
+
+      .recordings-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 16px;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .recording-item {
+        background: #262626;
+        padding: 16px;
+        border-radius: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .recording-score {
+        font-size: 24px;
+        font-weight: bold;
+        color: #4ade80;
+      }
+
+      .recording-details {
+        font-size: 14px;
+        color: #888;
+        margin-top: 4px;
+      }
+
+      .delete-button {
+        background: #ef4444;
+        border: none;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      /* Game Over */
+      .game-over {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #1a1a1a;
+        padding: 32px;
+        border-radius: 20px;
+        text-align: center;
+        z-index: 2000;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+      }
+
+      .game-over h2 {
+        font-size: 36px;
+        margin-bottom: 24px;
+      }
+
+      .final-score {
+        font-size: 64px;
+        font-weight: bold;
+        color: #4ade80;
+        margin-bottom: 24px;
+      }
+
+      .game-over-buttons {
+        display: flex;
+        gap: 16px;
+      }
+
+      .game-over-btn {
+        flex: 1;
+        padding: 16px;
+        border: none;
+        border-radius: 12px;
+        font-size: 18px;
+        font-weight: bold;
+        color: white;
+      }
+
+      .new-game-btn {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+      }
+
+      .menu-btn {
+        background: #374151;
+      }
+
+      /* Floating Score */
+      .floating-score {
+        position: fixed;
+        font-size: 32px;
+        font-weight: bold;
+        color: #4ade80;
+        pointer-events: none;
+        animation: float-up 2s ease-out forwards;
+        z-index: 3000;
+      }
+
+      @keyframes float-up {
+        0% {
+          opacity: 1;
+          transform: translate(-50%, 0);
+        }
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -100px);
+        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="app">
-        <div class="header">
-            <h1>21 Gold</h1>
-            <div style="display: flex; align-items: center;">
-                <span id="recordingBadge" class="recording-badge" style="display: none;">REC</span>
-                <button class="menu-button" onclick="app.toggleMenu()">Menu</button>
-            </div>
+      <div class="header">
+        <h1>21 Gold</h1>
+        <div style="display: flex; align-items: center">
+          <span
+            id="recordingBadge"
+            class="recording-badge"
+            style="display: none"
+            >REC</span
+          >
+          <button class="menu-button" onclick="app.toggleMenu()">Menu</button>
         </div>
+      </div>
 
-        <div class="info-bar">
-            <div class="info-item">
-                <div class="info-label">Score</div>
-                <div class="info-value score-value" id="score">0</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Busts</div>
-                <div class="info-value bust-value" id="busts">0/3</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Cards</div>
-                <div class="info-value cards-value" id="cards">52</div>
-            </div>
+      <div class="info-bar">
+        <div class="info-item">
+          <div class="info-label">Score</div>
+          <div class="info-value score-value" id="score">0</div>
         </div>
+        <div class="info-item">
+          <div class="info-label">Busts</div>
+          <div class="info-value bust-value" id="busts">0/3</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Cards</div>
+          <div class="info-value cards-value" id="cards">52</div>
+        </div>
+      </div>
 
-        <div class="cards-section">
-            <div class="current-card">
-                <div class="card-label">Current Card</div>
-                <div class="card-value" id="currentCard">-</div>
-            </div>
-            <div id="heldCard" class="held-card" onclick="app.toggleHeldCard()">
-                <div class="card-label">Held Card</div>
-                <div class="card-value" id="heldCardValue">None</div>
-            </div>
+      <div class="game-board">
+        <div class="column" onclick="app.playColumn(0)">
+          <div class="column-header">
+            <div class="column-number">1</div>
+            <div class="column-total" id="total0">0</div>
+          </div>
+          <div class="column-cards" id="cards0"></div>
         </div>
+        <div class="column" onclick="app.playColumn(1)">
+          <div class="column-header">
+            <div class="column-number">2</div>
+            <div class="column-total" id="total1">0</div>
+          </div>
+          <div class="column-cards" id="cards1"></div>
+        </div>
+        <div class="column" onclick="app.playColumn(2)">
+          <div class="column-header">
+            <div class="column-number">3</div>
+            <div class="column-total" id="total2">0</div>
+          </div>
+          <div class="column-cards" id="cards2"></div>
+        </div>
+        <div class="column" onclick="app.playColumn(3)">
+          <div class="column-header">
+            <div class="column-number">4</div>
+            <div class="column-total" id="total3">0</div>
+          </div>
+          <div class="column-cards" id="cards3"></div>
+        </div>
+      </div>
 
-        <div class="action-buttons">
-            <button class="action-btn hold-btn" id="holdBtn" onclick="app.holdCard()">HOLD</button>
-            <button class="action-btn undo-btn" id="undoBtn" onclick="app.undoMove()">UNDO</button>
+      <div class="cards-section">
+        <div class="current-card">
+          <div class="card-label">Current Card</div>
+          <div class="card-value" id="currentCard">-</div>
         </div>
+        <div id="heldCard" class="held-card" onclick="app.toggleHeldCard()">
+          <div class="card-label">Held Card</div>
+          <div class="card-value" id="heldCardValue">None</div>
+        </div>
+      </div>
 
-        <div class="game-board">
-            <div class="column" onclick="app.playColumn(0)">
-                <div class="column-header">
-                    <div class="column-number">1</div>
-                    <div class="column-total" id="total0">Total: 0</div>
-                </div>
-                <div class="column-cards" id="cards0"></div>
-            </div>
-            <div class="column" onclick="app.playColumn(1)">
-                <div class="column-header">
-                    <div class="column-number">2</div>
-                    <div class="column-total" id="total1">Total: 0</div>
-                </div>
-                <div class="column-cards" id="cards1"></div>
-            </div>
-            <div class="column" onclick="app.playColumn(2)">
-                <div class="column-header">
-                    <div class="column-number">3</div>
-                    <div class="column-total" id="total2">Total: 0</div>
-                </div>
-                <div class="column-cards" id="cards2"></div>
-            </div>
-            <div class="column" onclick="app.playColumn(3)">
-                <div class="column-header">
-                    <div class="column-number">4</div>
-                    <div class="column-total" id="total3">Total: 0</div>
-                </div>
-                <div class="column-cards" id="cards3"></div>
-            </div>
-        </div>
+      <div class="action-buttons">
+        <button
+          class="action-btn hold-btn"
+          id="holdBtn"
+          onclick="app.holdCard()"
+        >
+          HOLD
+        </button>
+        <button
+          class="action-btn undo-btn"
+          id="undoBtn"
+          onclick="app.undoMove()"
+        >
+          UNDO
+        </button>
+      </div>
     </div>
 
     <!-- Menu Modal -->
     <div class="modal" id="menuModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Menu</h2>
-                <button class="close-button" onclick="app.toggleMenu()">×</button>
-            </div>
-            <div class="menu-options">
-                <button id="startRecordBtn" class="menu-option primary" onclick="app.startRecording()">
-                    <span class="menu-icon">🔴</span>
-                    <span>Start Recording</span>
-                </button>
-                <button id="stopRecordBtn" class="menu-option success" onclick="app.stopRecording()" style="display: none;">
-                    <span class="menu-icon">⏹</span>
-                    <span>Stop Recording</span>
-                </button>
-                <button class="menu-option" onclick="app.newGame()">
-                    <span class="menu-icon">🎮</span>
-                    <span>New Game</span>
-                </button>
-                <button class="menu-option" onclick="app.exportRecordings()">
-                    <span class="menu-icon">📤</span>
-                    <span>Export Recordings</span>
-                </button>
-                <button class="menu-option" onclick="app.toggleRecordingsList()">
-                    <span class="menu-icon">📁</span>
-                    <span>Manage Recordings (<span id="recordCount">0</span>)</span>
-                </button>
-            </div>
-            
-            <div id="recordingsSection" class="recordings-section" style="display: none;">
-                <h3>Recorded Games</h3>
-                <div id="recordingsList" class="recordings-list"></div>
-            </div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Menu</h2>
+          <button class="close-button" onclick="app.toggleMenu()">×</button>
         </div>
+        <div class="menu-options">
+          <button
+            id="startRecordBtn"
+            class="menu-option primary"
+            onclick="app.startRecording()"
+          >
+            <span class="menu-icon">🔴</span>
+            <span>Start Recording</span>
+          </button>
+          <button
+            id="stopRecordBtn"
+            class="menu-option success"
+            onclick="app.stopRecording()"
+            style="display: none"
+          >
+            <span class="menu-icon">⏹</span>
+            <span>Stop Recording</span>
+          </button>
+          <button class="menu-option" onclick="app.newGame()">
+            <span class="menu-icon">🎮</span>
+            <span>New Game</span>
+          </button>
+          <button class="menu-option" onclick="app.exportRecordings()">
+            <span class="menu-icon">📤</span>
+            <span>Export Recordings</span>
+          </button>
+          <button class="menu-option" onclick="app.toggleRecordingsList()">
+            <span class="menu-icon">📁</span>
+            <span>Manage Recordings (<span id="recordCount">0</span>)</span>
+          </button>
+        </div>
+
+        <div
+          id="recordingsSection"
+          class="recordings-section"
+          style="display: none"
+        >
+          <h3>Recorded Games</h3>
+          <div id="recordingsList" class="recordings-list"></div>
+        </div>
+      </div>
     </div>
 
     <!-- Game Over -->
     <div class="game-over" id="gameOver">
-        <h2 id="gameOverTitle">Game Complete!</h2>
-        <div class="final-score" id="finalScore">0</div>
-        <div id="gameOverMessage" style="margin-bottom: 24px; color: #888;"></div>
-        <div class="game-over-buttons">
-            <button class="game-over-btn new-game-btn" onclick="app.newGame(); app.hideGameOver();">New Game</button>
-            <button class="game-over-btn menu-btn" onclick="app.hideGameOver(); app.toggleMenu();">Menu</button>
-        </div>
+      <h2 id="gameOverTitle">Game Complete!</h2>
+      <div class="final-score" id="finalScore">0</div>
+      <div id="gameOverMessage" style="margin-bottom: 24px; color: #888"></div>
+      <div class="game-over-buttons">
+        <button
+          class="game-over-btn new-game-btn"
+          onclick="app.newGame(); app.hideGameOver();"
+        >
+          New Game
+        </button>
+        <button
+          class="game-over-btn menu-btn"
+          onclick="app.hideGameOver(); app.toggleMenu();"
+        >
+          Menu
+        </button>
+      </div>
     </div>
 
     <script>
-        const app = {
-            game: null,
-            isRecording: false,
-            isPlayingHeld: false,
-            currentRecording: [],
-            recordedGames: [],
-            lastScore: 0,
+      const app = {
+        game: null,
+        isRecording: false,
+        isPlayingHeld: false,
+        currentRecording: [],
+        recordedGames: [],
+        lastScore: 0,
 
-            init() {
-                this.loadRecordings();
-                this.newGame();
-                this.setupTouchHandlers();
-                this.preventPullToRefresh();
-            },
+        init() {
+          this.loadRecordings();
+          this.newGame();
+          this.setupTouchHandlers();
+          this.preventPullToRefresh();
+        },
 
-            newGame() {
-                this.game = new TwentyOneGoldGame();
-                this.isPlayingHeld = false;
-                this.lastScore = 0;
-                this.updateDisplay();
-            },
+        newGame() {
+          this.game = new TwentyOneGoldGame();
+          this.isPlayingHeld = false;
+          this.lastScore = 0;
+          this.updateDisplay();
+        },
 
-            updateDisplay() {
-                if (!this.game) return;
-                
-                const state = this.game.getGameState();
-                
-                // Update info
-                document.getElementById('score').textContent = state.score;
-                document.getElementById('busts').textContent = `${state.bustCount}/3`;
-                document.getElementById('cards').textContent = state.remainingCards;
-                
-                // Update current card
-                let currentCard = '-';
-                if (state.currentCard !== null) {
-                    currentCard = state.currentCard === 'wild-jack' ? 'WILD' : state.currentCard;
-                }
-                document.getElementById('currentCard').textContent = currentCard;
-                
-                // Update held card
-                let heldCard = 'None';
-                const heldCardEl = document.getElementById('heldCard');
-                if (state.heldCard !== null) {
-                    heldCard = state.heldCard === 'wild-jack' ? 'WILD' : state.heldCard;
-                    heldCardEl.classList.add('has-card');
-                } else {
-                    heldCardEl.classList.remove('has-card', 'active');
-                    this.isPlayingHeld = false;
-                }
-                document.getElementById('heldCardValue').textContent = heldCard;
-                
-                // Update buttons
-                document.getElementById('holdBtn').disabled = !state.canHold || state.gameOver;
-                document.getElementById('undoBtn').disabled = !state.canUndo || state.gameOver;
-                
-                // Update columns
-                for (let i = 0; i < 4; i++) {
-                    this.updateColumn(i, state);
-                }
-                
-                // Show score animation
-                if (state.score > this.lastScore) {
-                    this.showFloatingScore(state.score - this.lastScore);
-                    this.lastScore = state.score;
-                }
-                
-                // Check game over
-                if (state.gameOver) {
-                    this.showGameOver(state);
-                }
-            },
+        updateDisplay() {
+          if (!this.game) return;
 
-            updateColumn(index, state) {
-                const column = document.querySelectorAll('.column')[index];
-                const total = state.columns[index];
-                const cards = state.columnCards[index];
-                
-                // Update total
-                document.getElementById(`total${index}`).textContent = `Total: ${total}`;
-                
-                // Update cards
-                const cardsContainer = document.getElementById(`cards${index}`);
-                cardsContainer.innerHTML = '';
-                
-                cards.forEach(card => {
-                    const cardEl = document.createElement('div');
-                    cardEl.className = 'playing-card';
-                    
-                    if (card === 10 && cards.filter(c => c === 10).length > 1) {
-                        cardEl.classList.add('wild');
-                    }
-                    
-                    cardEl.textContent = card === 1 ? 'A' : card;
-                    cardsContainer.appendChild(cardEl);
-                });
-                
-                // Update column state
-                column.classList.remove('can-play', 'bust', 'for-held');
-                
-                if (!state.gameOver) {
-                    if (total > 21) {
-                        column.classList.add('bust');
-                    } else if (this.isPlayingHeld && state.heldCard !== null) {
-                        column.classList.add('for-held');
-                    } else if (total < 21 && state.columnCardCounts[index] < 5) {
-                        column.classList.add('can-play');
-                    }
-                }
-            },
+          const state = this.game.getGameState();
 
-            playColumn(index) {
-                if (!this.game || this.game.gameOver) return;
-                
-                let result;
-                let action;
-                
-                if (this.isPlayingHeld && this.game.heldCard !== null) {
-                    result = this.game.playHeldCard(index);
-                    action = 5 + index;
-                    this.isPlayingHeld = false;
-                } else {
-                    result = this.game.playCard(index);
-                    action = index;
-                }
-                
-                if (result.success) {
-                    this.recordAction(action);
-                    this.updateDisplay();
-                    this.vibrate(50);
-                }
-            },
+          // Update info
+          document.getElementById("score").textContent = state.score;
+          document.getElementById("busts").textContent = `${state.bustCount}/3`;
+          document.getElementById("cards").textContent = state.remainingCards;
 
-            holdCard() {
-                if (!this.game || this.game.gameOver) return;
-                
-                const result = this.game.holdCard();
-                if (result.success) {
-                    this.recordAction(4);
-                    this.updateDisplay();
-                    this.vibrate(50);
-                }
-            },
+          // Update current card
+          let currentCard = "-";
+          if (state.currentCard !== null) {
+            currentCard =
+              state.currentCard === "wild-jack" ? "WILD" : state.currentCard;
+          }
+          document.getElementById("currentCard").textContent = currentCard;
 
-            undoMove() {
-                if (!this.game || this.game.gameOver) return;
-                
-                const result = this.game.undoLastMove();
-                if (result.success) {
-                    if (this.isRecording && this.currentRecording.length > 0) {
-                        this.currentRecording.pop();
-                    }
-                    this.isPlayingHeld = false;
-                    this.updateDisplay();
-                    this.vibrate(50);
-                }
-            },
+          // Update held card
+          let heldCard = "None";
+          const heldCardEl = document.getElementById("heldCard");
+          if (state.heldCard !== null) {
+            heldCard = state.heldCard === "wild-jack" ? "WILD" : state.heldCard;
+            heldCardEl.classList.add("has-card");
+          } else {
+            heldCardEl.classList.remove("has-card", "active");
+            this.isPlayingHeld = false;
+          }
+          document.getElementById("heldCardValue").textContent = heldCard;
 
-            toggleHeldCard() {
-                if (!this.game || this.game.gameOver || this.game.heldCard === null) return;
-                
-                this.isPlayingHeld = !this.isPlayingHeld;
-                const heldCardEl = document.getElementById('heldCard');
-                
-                if (this.isPlayingHeld) {
-                    heldCardEl.classList.add('active');
-                } else {
-                    heldCardEl.classList.remove('active');
-                }
-                
-                this.updateDisplay();
-                this.vibrate(30);
-            },
+          // Update buttons
+          document.getElementById("holdBtn").disabled =
+            !state.canHold || state.gameOver;
+          document.getElementById("undoBtn").disabled =
+            !state.canUndo || state.gameOver;
 
-            startRecording() {
-                this.isRecording = true;
-                this.currentRecording = [];
-                this.newGame();
-                
-                document.getElementById('recordingBadge').style.display = 'block';
-                document.getElementById('startRecordBtn').style.display = 'none';
-                document.getElementById('stopRecordBtn').style.display = 'flex';
-                
-                this.toggleMenu();
-            },
+          // Update columns
+          for (let i = 0; i < 4; i++) {
+            this.updateColumn(i, state);
+          }
 
-            stopRecording() {
-                this.isRecording = false;
-                
-                document.getElementById('recordingBadge').style.display = 'none';
-                document.getElementById('startRecordBtn').style.display = 'flex';
-                document.getElementById('stopRecordBtn').style.display = 'none';
-                
-                if (this.currentRecording.length > 0) {
-                    this.saveRecording();
-                }
-            },
+          // Show score animation
+          if (state.score > this.lastScore) {
+            this.showFloatingScore(state.score - this.lastScore);
+            this.lastScore = state.score;
+          }
 
-            recordAction(action) {
-                if (!this.isRecording) return;
-                
-                const state = this.getMLState();
-                this.currentRecording.push({
-                    state: state,
-                    action: action,
-                    reward: 0,
-                    nextState: null,
-                    done: false
-                });
-            },
+          // Check game over
+          if (state.gameOver) {
+            this.showGameOver(state);
+          }
+        },
 
-            getMLState() {
-                const gameState = this.game.getGameState();
-                const state = [];
-                
-                // Build state vector (39 features)
-                // Column totals
-                for (let i = 0; i < 4; i++) {
-                    state.push(gameState.columns[i] / 21);
-                }
-                
-                // Column card counts
-                for (let i = 0; i < 4; i++) {
-                    state.push(gameState.columnCardCounts[i] / 5);
-                }
-                
-                // Current card
-                const currentCard = gameState.currentCard === 'wild-jack' ? 10 : gameState.currentCard;
-                state.push(currentCard / 11);
-                
-                // Held card
-                const heldCard = gameState.heldCard === null ? 0 : 
-                                (gameState.heldCard === 'wild-jack' ? 10 : gameState.heldCard);
-                state.push(heldCard / 11);
-                
-                // Game stats
-                state.push(gameState.holdsUsed / 5);
-                state.push(gameState.bustCount / 3);
-                state.push(gameState.consecutiveClears / 4);
-                state.push(gameState.remainingCards / 52);
-                state.push(gameState.canHold ? 1 : 0);
-                
-                // Column cards (padded to 5 per column)
-                for (let i = 0; i < 4; i++) {
-                    const cards = gameState.columnCards[i];
-                    for (let j = 0; j < 5; j++) {
-                        state.push(j < cards.length ? cards[j] / 11 : 0);
-                    }
-                }
-                
-                // Ace counts
-                for (let i = 0; i < 4; i++) {
-                    const aces = gameState.columnCards[i].filter(c => c === 1).length;
-                    state.push(aces / 5);
-                }
-                
-                return state;
-            },
+        updateColumn(index, state) {
+          const column = document.querySelectorAll(".column")[index];
+          const total = state.columns[index];
+          const cards = state.columnCards[index];
 
-            saveRecording() {
-                // Calculate rewards
-                const finalScore = this.game.score;
-                for (let i = 0; i < this.currentRecording.length; i++) {
-                    const record = this.currentRecording[i];
-                    record.reward = finalScore / this.currentRecording.length / 100;
-                    
-                    if (i < this.currentRecording.length - 1) {
-                        record.nextState = this.currentRecording[i + 1].state;
-                    } else {
-                        record.nextState = record.state;
-                        record.done = true;
-                        record.reward = finalScore / 100;
-                    }
-                }
-                
-                const recording = {
-                    id: Date.now(),
-                    score: finalScore,
-                    moves: this.currentRecording.length,
-                    busts: this.game.bustCount,
-                    timestamp: new Date().toISOString(),
-                    data: this.currentRecording
-                };
-                
-                this.recordedGames.push(recording);
-                this.saveRecordings();
-                this.updateRecordCount();
-            },
+          // Update total
+          document.getElementById(`total${index}`).textContent = `${total}`;
 
-            toggleMenu() {
-                const modal = document.getElementById('menuModal');
-                modal.style.display = modal.style.display === 'none' ? 'block' : 'none';
-            },
+          // Update cards
+          const cardsContainer = document.getElementById(`cards${index}`);
+          cardsContainer.innerHTML = "";
 
-            toggleRecordingsList() {
-                const section = document.getElementById('recordingsSection');
-                section.style.display = section.style.display === 'none' ? 'block' : 'none';
-                
-                if (section.style.display === 'block') {
-                    this.renderRecordingsList();
-                }
-            },
+          cards.forEach((card) => {
+            const cardEl = document.createElement("div");
+            cardEl.className = "playing-card";
 
-            renderRecordingsList() {
-                const container = document.getElementById('recordingsList');
-                container.innerHTML = '';
-                
-                if (this.recordedGames.length === 0) {
-                    container.innerHTML = '<p style="text-align: center; color: #666;">No recordings yet</p>';
-                    return;
-                }
-                
-                const sorted = [...this.recordedGames].sort((a, b) => b.score - a.score);
-                
-                sorted.forEach(rec => {
-                    const item = document.createElement('div');
-                    item.className = 'recording-item';
-                    
-                    const info = document.createElement('div');
-                    info.innerHTML = `
+            if (card === 10 && cards.filter((c) => c === 10).length > 1) {
+              cardEl.classList.add("wild");
+            }
+
+            cardEl.textContent = card === 1 ? "A" : card;
+            cardsContainer.appendChild(cardEl);
+          });
+
+          // Update column state
+          column.classList.remove("can-play", "bust", "for-held");
+
+          if (!state.gameOver) {
+            if (total > 21) {
+              column.classList.add("bust");
+            } else if (this.isPlayingHeld && state.heldCard !== null) {
+              column.classList.add("for-held");
+            } else if (total < 21 && state.columnCardCounts[index] < 5) {
+              column.classList.add("can-play");
+            }
+          }
+        },
+
+        playColumn(index) {
+          if (!this.game || this.game.gameOver) return;
+
+          let result;
+          let action;
+
+          if (this.isPlayingHeld && this.game.heldCard !== null) {
+            result = this.game.playHeldCard(index);
+            action = 5 + index;
+            this.isPlayingHeld = false;
+          } else {
+            result = this.game.playCard(index);
+            action = index;
+          }
+
+          if (result.success) {
+            this.recordAction(action);
+            this.updateDisplay();
+            this.vibrate(50);
+          }
+        },
+
+        holdCard() {
+          if (!this.game || this.game.gameOver) return;
+
+          const result = this.game.holdCard();
+          if (result.success) {
+            this.recordAction(4);
+            this.updateDisplay();
+            this.vibrate(50);
+          }
+        },
+
+        undoMove() {
+          if (!this.game || this.game.gameOver) return;
+
+          const result = this.game.undoLastMove();
+          if (result.success) {
+            if (this.isRecording && this.currentRecording.length > 0) {
+              this.currentRecording.pop();
+            }
+            this.isPlayingHeld = false;
+            this.updateDisplay();
+            this.vibrate(50);
+          }
+        },
+
+        toggleHeldCard() {
+          if (!this.game || this.game.gameOver || this.game.heldCard === null)
+            return;
+
+          this.isPlayingHeld = !this.isPlayingHeld;
+          const heldCardEl = document.getElementById("heldCard");
+
+          if (this.isPlayingHeld) {
+            heldCardEl.classList.add("active");
+          } else {
+            heldCardEl.classList.remove("active");
+          }
+
+          this.updateDisplay();
+          this.vibrate(30);
+        },
+
+        startRecording() {
+          this.isRecording = true;
+          this.currentRecording = [];
+          this.newGame();
+
+          document.getElementById("recordingBadge").style.display = "block";
+          document.getElementById("startRecordBtn").style.display = "none";
+          document.getElementById("stopRecordBtn").style.display = "flex";
+
+          this.toggleMenu();
+        },
+
+        stopRecording() {
+          this.isRecording = false;
+
+          document.getElementById("recordingBadge").style.display = "none";
+          document.getElementById("startRecordBtn").style.display = "flex";
+          document.getElementById("stopRecordBtn").style.display = "none";
+
+          if (this.currentRecording.length > 0) {
+            this.saveRecording();
+          }
+        },
+
+        recordAction(action) {
+          if (!this.isRecording) return;
+
+          const state = this.getMLState();
+          this.currentRecording.push({
+            state: state,
+            action: action,
+            reward: 0,
+            nextState: null,
+            done: false
+          });
+        },
+
+        getMLState() {
+          const gameState = this.game.getGameState();
+          const state = [];
+
+          // Build state vector (39 features)
+          // Column totals
+          for (let i = 0; i < 4; i++) {
+            state.push(gameState.columns[i] / 21);
+          }
+
+          // Column card counts
+          for (let i = 0; i < 4; i++) {
+            state.push(gameState.columnCardCounts[i] / 5);
+          }
+
+          // Current card
+          const currentCard =
+            gameState.currentCard === "wild-jack" ? 10 : gameState.currentCard;
+          state.push(currentCard / 11);
+
+          // Held card
+          const heldCard =
+            gameState.heldCard === null
+              ? 0
+              : gameState.heldCard === "wild-jack"
+              ? 10
+              : gameState.heldCard;
+          state.push(heldCard / 11);
+
+          // Game stats
+          state.push(gameState.holdsUsed / 5);
+          state.push(gameState.bustCount / 3);
+          state.push(gameState.consecutiveClears / 4);
+          state.push(gameState.remainingCards / 52);
+          state.push(gameState.canHold ? 1 : 0);
+
+          // Column cards (padded to 5 per column)
+          for (let i = 0; i < 4; i++) {
+            const cards = gameState.columnCards[i];
+            for (let j = 0; j < 5; j++) {
+              state.push(j < cards.length ? cards[j] / 11 : 0);
+            }
+          }
+
+          // Ace counts
+          for (let i = 0; i < 4; i++) {
+            const aces = gameState.columnCards[i].filter((c) => c === 1).length;
+            state.push(aces / 5);
+          }
+
+          return state;
+        },
+
+        saveRecording() {
+          // Calculate rewards
+          const finalScore = this.game.score;
+          for (let i = 0; i < this.currentRecording.length; i++) {
+            const record = this.currentRecording[i];
+            record.reward = finalScore / this.currentRecording.length / 100;
+
+            if (i < this.currentRecording.length - 1) {
+              record.nextState = this.currentRecording[i + 1].state;
+            } else {
+              record.nextState = record.state;
+              record.done = true;
+              record.reward = finalScore / 100;
+            }
+          }
+
+          const recording = {
+            id: Date.now(),
+            score: finalScore,
+            moves: this.currentRecording.length,
+            busts: this.game.bustCount,
+            timestamp: new Date().toISOString(),
+            data: this.currentRecording
+          };
+
+          this.recordedGames.push(recording);
+          this.saveRecordings();
+          this.updateRecordCount();
+        },
+
+        toggleMenu() {
+          const modal = document.getElementById("menuModal");
+          modal.style.display =
+            modal.style.display === "none" ? "block" : "none";
+        },
+
+        toggleRecordingsList() {
+          const section = document.getElementById("recordingsSection");
+          section.style.display =
+            section.style.display === "none" ? "block" : "none";
+
+          if (section.style.display === "block") {
+            this.renderRecordingsList();
+          }
+        },
+
+        renderRecordingsList() {
+          const container = document.getElementById("recordingsList");
+          container.innerHTML = "";
+
+          if (this.recordedGames.length === 0) {
+            container.innerHTML =
+              '<p style="text-align: center; color: #666;">No recordings yet</p>';
+            return;
+          }
+
+          const sorted = [...this.recordedGames].sort(
+            (a, b) => b.score - a.score
+          );
+
+          sorted.forEach((rec) => {
+            const item = document.createElement("div");
+            item.className = "recording-item";
+
+            const info = document.createElement("div");
+            info.innerHTML = `
                         <div class="recording-score">${rec.score}</div>
                         <div class="recording-details">
-                            ${rec.moves} moves • ${rec.busts} busts • ${new Date(rec.timestamp).toLocaleTimeString()}
+                            ${rec.moves} moves • ${
+              rec.busts
+            } busts • ${new Date(rec.timestamp).toLocaleTimeString()}
                         </div>
                     `;
-                    
-                    const deleteBtn = document.createElement('button');
-                    deleteBtn.className = 'delete-button';
-                    deleteBtn.textContent = 'Delete';
-                    deleteBtn.onclick = () => this.deleteRecording(rec.id);
-                    
-                    item.appendChild(info);
-                    item.appendChild(deleteBtn);
-                    container.appendChild(item);
-                });
-            },
 
-            deleteRecording(id) {
-                if (confirm('Delete this recording?')) {
-                    this.recordedGames = this.recordedGames.filter(r => r.id !== id);
-                    this.saveRecordings();
-                    this.updateRecordCount();
-                    this.renderRecordingsList();
-                }
-            },
+            const deleteBtn = document.createElement("button");
+            deleteBtn.className = "delete-button";
+            deleteBtn.textContent = "Delete";
+            deleteBtn.onclick = () => this.deleteRecording(rec.id);
 
-            exportRecordings() {
-                if (this.recordedGames.length === 0) {
-                    alert('No recordings to export');
-                    return;
-                }
-                
-                const data = JSON.stringify(this.recordedGames);
-                const blob = new Blob([data], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `21gold-recordings-${Date.now()}.json`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                
-                // Try native share if available
-                if (navigator.share && navigator.canShare) {
-                    const file = new File([blob], a.download, { type: 'application/json' });
-                    if (navigator.canShare({ files: [file] })) {
-                        navigator.share({
-                            files: [file],
-                            title: '21 Gold Recordings',
-                            text: `${this.recordedGames.length} recorded games`
-                        }).catch(() => {
-                            // Share failed, but download already happened
-                        });
-                    }
-                }
-            },
+            item.appendChild(info);
+            item.appendChild(deleteBtn);
+            container.appendChild(item);
+          });
+        },
 
-            updateRecordCount() {
-                document.getElementById('recordCount').textContent = this.recordedGames.length;
-            },
+        deleteRecording(id) {
+          if (confirm("Delete this recording?")) {
+            this.recordedGames = this.recordedGames.filter((r) => r.id !== id);
+            this.saveRecordings();
+            this.updateRecordCount();
+            this.renderRecordingsList();
+          }
+        },
 
-            saveRecordings() {
-                try {
-                    localStorage.setItem('21gold-mobile-recordings', JSON.stringify(this.recordedGames));
-                } catch (e) {
-                    console.error('Failed to save recordings:', e);
-                }
-            },
+        exportRecordings() {
+          if (this.recordedGames.length === 0) {
+            alert("No recordings to export");
+            return;
+          }
 
-            loadRecordings() {
-                try {
-                    const saved = localStorage.getItem('21gold-mobile-recordings');
-                    if (saved) {
-                        this.recordedGames = JSON.parse(saved);
-                        this.updateRecordCount();
-                    }
-                } catch (e) {
-                    console.error('Failed to load recordings:', e);
-                }
-            },
+          const data = JSON.stringify(this.recordedGames);
+          const blob = new Blob([data], { type: "application/json" });
+          const url = URL.createObjectURL(blob);
 
-            showFloatingScore(points) {
-                const el = document.createElement('div');
-                el.className = 'floating-score';
-                el.textContent = `+${points}`;
-                el.style.left = '50%';
-                el.style.top = '40%';
-                document.body.appendChild(el);
-                
-                setTimeout(() => {
-                    document.body.removeChild(el);
-                }, 2000);
-            },
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `21gold-recordings-${Date.now()}.json`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
 
-            showGameOver(state) {
-                const title = document.getElementById('gameOverTitle');
-                const score = document.getElementById('finalScore');
-                const message = document.getElementById('gameOverMessage');
-                
-                title.textContent = state.gameWon ? 'Complete!' : 'Game Over!';
-                score.textContent = state.score;
-                
-                let msg = '';
-                if (state.score >= 8000) {
-                    msg = '🏆 Incredible! Master level!';
-                } else if (state.score >= 6000) {
-                    msg = '⭐ Excellent game!';
-                } else if (state.score >= 4000) {
-                    msg = '👍 Good job!';
-                } else {
-                    msg = 'Keep practicing!';
-                }
-                message.textContent = msg;
-                
-                document.getElementById('gameOver').style.display = 'block';
-                
-                if (this.isRecording) {
-                    this.stopRecording();
-                }
-            },
-
-            hideGameOver() {
-                document.getElementById('gameOver').style.display = 'none';
-            },
-
-            vibrate(duration) {
-                if ('vibrate' in navigator) {
-                    navigator.vibrate(duration);
-                }
-            },
-
-            setupTouchHandlers() {
-                // Prevent double-tap zoom
-                let lastTouchEnd = 0;
-                document.addEventListener('touchend', (e) => {
-                    const now = Date.now();
-                    if (now - lastTouchEnd <= 300) {
-                        e.preventDefault();
-                    }
-                    lastTouchEnd = now;
-                }, false);
-                
-                // Add touch feedback
-                document.querySelectorAll('button, .column, .held-card').forEach(el => {
-                    el.addEventListener('touchstart', () => {
-                        el.style.opacity = '0.8';
-                    });
-                    el.addEventListener('touchend', () => {
-                        el.style.opacity = '1';
-                    });
-                });
-            },
-
-            preventPullToRefresh() {
-                // Allow small scroll to hide URL bar, but prevent pull-to-refresh
-                let startY = 0;
-                
-                document.addEventListener('touchstart', (e) => {
-                    startY = e.touches[0].pageY;
-                }, { passive: true });
-                
-                document.addEventListener('touchmove', (e) => {
-                    const y = e.touches[0].pageY;
-                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                    
-                    // Only prevent if at top and pulling down beyond threshold
-                    if (scrollTop <= 0 && y > startY + 10) {
-                        e.preventDefault();
-                    }
-                }, { passive: false });
-                
-                // Auto-scroll a tiny bit to hide URL bar on load
-                setTimeout(() => {
-                    window.scrollTo(0, 1);
-                }, 100);
-            }
-        };
-
-        // Initialize app when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => app.init());
-        } else {
-            app.init();
-        }
-
-        // Prevent context menu on long press
-        window.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            return false;
-        });
-
-        // Handle visibility change to save state
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden && app.recordedGames.length > 0) {
-                app.saveRecordings();
-            }
-        });
-
-        // Wake lock for recording
-        if ('wakeLock' in navigator) {
-            let wakeLock = null;
-            
-            document.addEventListener('visibilitychange', async () => {
-                if (document.visibilityState === 'visible' && app.isRecording) {
-                    try {
-                        wakeLock = await navigator.wakeLock.request('screen');
-                    } catch (e) {
-                        // Wake lock failed
-                    }
-                } else if (wakeLock) {
-                    wakeLock.release();
-                    wakeLock = null;
-                }
+          // Try native share if available
+          if (navigator.share && navigator.canShare) {
+            const file = new File([blob], a.download, {
+              type: "application/json"
             });
+            if (navigator.canShare({ files: [file] })) {
+              navigator
+                .share({
+                  files: [file],
+                  title: "21 Gold Recordings",
+                  text: `${this.recordedGames.length} recorded games`
+                })
+                .catch(() => {
+                  // Share failed, but download already happened
+                });
+            }
+          }
+        },
+
+        updateRecordCount() {
+          document.getElementById("recordCount").textContent =
+            this.recordedGames.length;
+        },
+
+        saveRecordings() {
+          try {
+            localStorage.setItem(
+              "21gold-mobile-recordings",
+              JSON.stringify(this.recordedGames)
+            );
+          } catch (e) {
+            console.error("Failed to save recordings:", e);
+          }
+        },
+
+        loadRecordings() {
+          try {
+            const saved = localStorage.getItem("21gold-mobile-recordings");
+            if (saved) {
+              this.recordedGames = JSON.parse(saved);
+              this.updateRecordCount();
+            }
+          } catch (e) {
+            console.error("Failed to load recordings:", e);
+          }
+        },
+
+        showFloatingScore(points) {
+          const el = document.createElement("div");
+          el.className = "floating-score";
+          el.textContent = `+${points}`;
+          el.style.left = "50%";
+          el.style.top = "40%";
+          document.body.appendChild(el);
+
+          setTimeout(() => {
+            document.body.removeChild(el);
+          }, 2000);
+        },
+
+        showGameOver(state) {
+          const title = document.getElementById("gameOverTitle");
+          const score = document.getElementById("finalScore");
+          const message = document.getElementById("gameOverMessage");
+
+          title.textContent = state.gameWon ? "Complete!" : "Game Over!";
+          score.textContent = state.score;
+
+          let msg = "";
+          if (state.score >= 8000) {
+            msg = "🏆 Incredible! Master level!";
+          } else if (state.score >= 6000) {
+            msg = "⭐ Excellent game!";
+          } else if (state.score >= 4000) {
+            msg = "👍 Good job!";
+          } else {
+            msg = "Keep practicing!";
+          }
+          message.textContent = msg;
+
+          document.getElementById("gameOver").style.display = "block";
+
+          if (this.isRecording) {
+            this.stopRecording();
+          }
+        },
+
+        hideGameOver() {
+          document.getElementById("gameOver").style.display = "none";
+        },
+
+        vibrate(duration) {
+          if ("vibrate" in navigator) {
+            navigator.vibrate(duration);
+          }
+        },
+
+        setupTouchHandlers() {
+          // Prevent double-tap zoom
+          let lastTouchEnd = 0;
+          document.addEventListener(
+            "touchend",
+            (e) => {
+              const now = Date.now();
+              if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+              }
+              lastTouchEnd = now;
+            },
+            false
+          );
+
+          // Add touch feedback
+          document
+            .querySelectorAll("button, .column, .held-card")
+            .forEach((el) => {
+              el.addEventListener("touchstart", () => {
+                el.style.opacity = "0.8";
+              });
+              el.addEventListener("touchend", () => {
+                el.style.opacity = "1";
+              });
+            });
+        },
+
+        preventPullToRefresh() {
+          let startY = 0;
+
+          document.addEventListener(
+            "touchstart",
+            (e) => {
+              startY = e.touches[0].pageY;
+            },
+            { passive: true }
+          );
+
+          document.addEventListener(
+            "touchmove",
+            (e) => {
+              const y = e.touches[0].pageY;
+              const scrollTop =
+                document.documentElement.scrollTop || document.body.scrollTop;
+
+              if (scrollTop === 0 && y > startY) {
+                e.preventDefault();
+              }
+            },
+            { passive: false }
+          );
         }
+      };
+
+      // Initialize app when DOM is ready
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", () => app.init());
+      } else {
+        app.init();
+      }
+
+      // Prevent context menu on long press
+      window.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        return false;
+      });
+
+      // Handle visibility change to save state
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden && app.recordedGames.length > 0) {
+          app.saveRecordings();
+        }
+      });
+
+      // Wake lock for recording
+      if ("wakeLock" in navigator) {
+        let wakeLock = null;
+
+        document.addEventListener("visibilitychange", async () => {
+          if (document.visibilityState === "visible" && app.isRecording) {
+            try {
+              wakeLock = await navigator.wakeLock.request("screen");
+            } catch (e) {
+              // Wake lock failed
+            }
+          } else if (wakeLock) {
+            wakeLock.release();
+            wakeLock = null;
+          }
+        });
+      }
     </script>
-</body>
+  </body>
 </html>
