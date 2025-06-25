@@ -155,15 +155,15 @@ class TwentyOneGoldGame {
       let points = 200;
       let message = `Wild jack played in column ${column + 1}`;
 
+      if (this.columnCardCounts[column] === 5) {
+        points += 600;
+        this.scoringLog.push(`Also 5-card bonus: +600`);
+      }
+
       if (this.columns[column] === 21) {
         points += 400;
         message += ` creating 21`;
         this.scoringLog.push(`Wild Jack + 21 clear: +${points}`);
-
-        if (this.columnCardCounts[column] === 5) {
-          points += 600;
-          this.scoringLog.push(`Also 5-card bonus: +600`);
-        }
       } else {
         this.scoringLog.push(`Wild Jack clear: +${points}`);
       }
