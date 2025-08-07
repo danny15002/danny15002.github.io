@@ -3,875 +3,253 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personal Values Ranking System</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-
-        .progress-info {
-            margin-bottom: 20px;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: white;
-            transition: width 0.3s ease;
-        }
-
-        .main-container {
-            padding: 40px;
-        }
-
-        .phase-indicator {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: #f0f9ff;
-            border-radius: 12px;
-            border-left: 5px solid #0ea5e9;
-        }
-
-        .phase-indicator h3 {
-            color: #1e40af;
-            margin-bottom: 10px;
-        }
-
-        /* Initial Selection Phase */
-        .selection-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .value-card {
-            background: #f8fafc;
-            border: 3px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .value-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            border-color: #4f46e5;
-        }
-
-        .value-card.selected {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-            color: white;
-            border-color: #4f46e5;
-        }
-
-        .value-card.eliminated {
-            background: #f1f5f9;
-            border-color: #cbd5e1;
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .value-name {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .value-description {
-            font-size: 0.95rem;
-            line-height: 1.4;
-            opacity: 0.8;
-        }
-
-        /* Ranking Phase */
-        .ranking-container {
-            display: flex;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        .comparison-section {
-            flex: 2;
-        }
-
-        .matchup {
-            display: flex;
-            gap: 30px;
-            align-items: stretch;
-            margin-bottom: 30px;
-        }
-
-        .matchup .value-card {
-            flex: 1;
-            padding: 30px;
-        }
-
-        .vs {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            font-weight: bold;
-            color: #6b7280;
-            min-width: 60px;
-        }
-
-        .current-rankings {
-            flex: 1;
-            background: #f8fafc;
-            border-radius: 16px;
-            padding: 20px;
-            height: fit-content;
-        }
-
-        .ranking-title {
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: #1f2937;
-            text-align: center;
-        }
-
-        .ranking-list {
-            list-style: none;
-        }
-
-        .ranking-item {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            margin-bottom: 8px;
-            background: white;
-            border-radius: 8px;
-            border-left: 4px solid #10b981;
-        }
-
-        .rank-number {
-            font-weight: bold;
-            color: #059669;
-            margin-right: 12px;
-            min-width: 25px;
-        }
-
-        .rank-value-name {
-            font-weight: 600;
-            color: #1f2937;
-            font-size: 0.9rem;
-        }
-
-        /* Action Buttons */
-        .action-buttons {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .btn {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 0 10px;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, #6b7280, #4b5563);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #10b981, #059669);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-        }
-
-        /* Results */
-        .results {
-            text-align: center;
-        }
-
-        .final-rankings {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .final-rank-card {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            padding: 25px;
-            border-radius: 12px;
-            text-align: center;
-        }
-
-        .final-rank-number {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .final-value-name {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .final-value-description {
-            font-size: 0.95rem;
-            opacity: 0.9;
-        }
-
-        @media (max-width: 768px) {
-            .ranking-container {
-                flex-direction: column;
-            }
-            
-            .matchup {
-                flex-direction: column;
-                gap: 20px;
-            }
-            
-            .vs {
-                transform: rotate(90deg);
-                min-width: auto;
-                min-height: 40px;
-            }
-            
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            .main-container {
-                padding: 20px;
-            }
-        }
-    </style>
+    <title>React App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="module">
+        import { ChevronUp, ChevronDown, ChevronsUp, ChevronsDown } from 'https://cdn.skypack.dev/lucide-react';
+        
+        // Make them globally available
+        window.LucideIcons = { ChevronUp, ChevronDown, ChevronsUp, ChevronsDown };
+    </script>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Personal Values Ranking System</h1>
-            <div class="progress-info">
-                <p id="round-info">Phase 1: Initial Selection</p>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progress-fill"></div>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const ValuesRankingApp = () => {
+            const { useState } = React;
+            const { ChevronUp, ChevronDown, ChevronsUp, ChevronsDown } = window.LucideIcons;
+
+            const initialValues = [
+                { name: 'ACCEPTANCE', description: 'to be accepted as I am' },
+                { name: 'ACCURACY', description: 'to be accurate in my opinions and beliefs' },
+                { name: 'ACHIEVEMENT', description: 'to have important accomplishments' },
+                { name: 'ADVENTURE', description: 'to have new and exciting experiences' },
+                { name: 'ATTRACTIVENESS', description: 'to be physically attractive' },
+                { name: 'AUTHORITY', description: 'to be in charge of and responsible for others' },
+                { name: 'AUTONOMY', description: 'to be self-determined and independent' },
+                { name: 'BEAUTY', description: 'to appreciate beauty around me' },
+                { name: 'CARING', description: 'to take care of others' },
+                { name: 'CHALLENGE', description: 'to take on difficult tasks and problems' },
+                { name: 'CHANGE', description: 'to have a life full of change and variety' },
+                { name: 'COMFORT', description: 'to have a pleasant and comfortable life' },
+                { name: 'COMMITMENT', description: 'to make enduring, meaningful commitments' },
+                { name: 'COMPASSION', description: 'to feel and act on concern for others' },
+                { name: 'CONTRIBUTION', description: 'to make a lasting contribution in the world' },
+                { name: 'COOPERATION', description: 'to work collaboratively with others' },
+                { name: 'COURTESY', description: 'to be considerate and polite toward others' },
+                { name: 'CREATIVITY', description: 'to have new and original ideas' },
+                { name: 'DEPENDABILITY', description: 'to be reliable and trustworthy' },
+                { name: 'DUTY', description: 'to carry out my duties and obligations' },
+                { name: 'EXCITEMENT', description: 'to have a life full of thrills and stimulation' },
+                { name: 'FAITHFULNESS', description: 'to be loyal and true in relationships' },
+                { name: 'FAME', description: 'to be known and recognized' },
+                { name: 'FAMILY', description: 'to have a happy, loving family' },
+                { name: 'FITNESS', description: 'to be physically fit and strong' },
+                { name: 'FLEXIBILITY', description: 'to adjust to new circumstances easily' },
+                { name: 'FORGIVENESS', description: 'to be forgiving of others' },
+                { name: 'FRIENDSHIP', description: 'to have close friendships' },
+                { name: 'FUN', description: 'to play and have fun' },
+                { name: 'GENEROSITY', description: 'to give what I have to others' },
+                { name: 'GENUINENESS', description: 'to act in a manner that is true to who I am' },
+                { name: "GOD'S WILL", description: 'to seek and obey the will of God' },
+                { name: 'GROWTH', description: 'to keep changing and growing' },
+                { name: 'HEALTH', description: 'to be physically well and healthy' },
+                { name: 'HELPFULNESS', description: 'to be helpful to others' },
+                { name: 'HONESTY', description: 'to be honest and truthful' },
+                { name: 'HOPE', description: 'to maintain a positive and optimistic outlook' },
+                { name: 'HUMILITY', description: 'to be modest and unassuming' },
+                { name: 'HUMOR', description: 'to see the humorous side of myself and the world' },
+                { name: 'INDEPENDENCE', description: 'to be free from dependence on others' },
+                { name: 'INTIMACY', description: 'to share my innermost experiences with others' },
+                { name: 'JUSTICE', description: 'to promote fair and equal treatment for all' },
+                { name: 'KNOWLEDGE', description: 'to learn and contribute valuable knowledge' },
+                { name: 'LEISURE', description: 'to take time to relax and enjoy' },
+                { name: 'LOVED', description: 'to be loved by those close to me' },
+                { name: 'LOVING', description: 'to give love to others' },
+                { name: 'MASTERY', description: 'to be competent in my everyday activities' },
+                { name: 'MINDFULNESS', description: 'to live conscious and mindful of the present moment' },
+                { name: 'MODERATION', description: 'to avoid excess and find a middle ground' },
+                { name: 'MONOGAMY', description: 'to have one close, loving relationship' },
+                { name: 'NONCONFORMITY', description: 'to question and challenge authority and norms' },
+                { name: 'NURTURANCE', description: 'to take care of and nurture others' },
+                { name: 'OPENNESS', description: 'to be open to new experiences, ideas, and options' },
+                { name: 'ORDER', description: 'to have a life that is well-ordered and organized' },
+                { name: 'PASSION', description: 'to have deep feelings about ideas, activities, or people' },
+                { name: 'PLEASURE', description: 'to feel good' },
+                { name: 'POPULARITY', description: 'to be well-liked by many people' },
+                { name: 'POWER', description: 'to have control over others' },
+                { name: 'PURPOSE', description: 'to have meaning and direction in my life' },
+                { name: 'RATIONALITY', description: 'to be guided by reason and logic' },
+                { name: 'RISK', description: 'to take risks and chances' },
+                { name: 'ROMANCE', description: 'to have an intense, exciting love in my life' },
+                { name: 'SAFETY', description: 'to be safe and secure' },
+                { name: 'SELF-ACCEPTANCE', description: 'to accept myself as I am' },
+                { name: 'SELF-CONTROL', description: 'to be disciplined in my own actions' },
+                { name: 'SELF-ESTEEM', description: 'to feel good about myself' },
+                { name: 'SELF-KNOWLEDGE', description: 'to have deep and honest understanding of myself' },
+                { name: 'SERVICE', description: 'to be of service to others' },
+                { name: 'SEXUALITY', description: 'to have an active and satisfying sex life' },
+                { name: 'SIMPLICITY', description: 'to live life simply, with minimal needs' },
+                { name: 'SOLITUDE', description: 'to have time and space where I can be apart from others' },
+                { name: 'SPIRITUALITY', description: 'to grow and mature spiritually' },
+                { name: 'STABILITY', description: 'to have a life that stays fairly consistent' },
+                { name: 'TOLERANCE', description: 'to accept and respect those who are different from me' },
+                { name: 'TRADITION', description: 'to follow respected patterns of the past' },
+                { name: 'VIRTUE', description: 'to live a morally pure and excellent life' },
+                { name: 'WEALTH', description: 'to have plenty of money' },
+                { name: 'WORLD PEACE', description: 'to work to promote peace in the world' }
+            ].sort((a, b) => a.name.localeCompare(b.name));
+
+            const [values, setValues] = useState(initialValues);
+
+            const moveValue = (index, direction) => {
+                const newValues = [...values];
+                let newIndex;
+
+                switch (direction) {
+                case 'top':
+                    newIndex = 0;
+                    break;
+                case 'up':
+                    newIndex = Math.max(0, index - 1);
+                    break;
+                case 'down':
+                    newIndex = Math.min(values.length - 1, index + 1);
+                    break;
+                case 'bottom':
+                    newIndex = values.length - 1;
+                    break;
+                default:
+                    return;
+                }
+
+                if (newIndex !== index) {
+                const [movedValue] = newValues.splice(index, 1);
+                newValues.splice(newIndex, 0, movedValue);
+                setValues(newValues);
+                }
+            };
+
+            const getRowStyle = (index) => {
+                if (index < 10) {
+                return 'bg-yellow-100 border-yellow-300 shadow-md';
+                } else if ((index + 1) % 5 === 0) {
+                return 'bg-blue-50 border-blue-200';
+                }
+                return 'bg-white border-gray-200';
+            };
+
+            const getRankDisplay = (index) => {
+                const rank = index + 1;
+                if (rank <= 10) {
+                return (
+                    <div className="flex items-center">
+                    <span className="text-lg font-bold text-yellow-600">#{rank}</span>
+                    <span className="ml-2 text-sm text-yellow-600 font-medium">TOP 10</span>
+                    </div>
+                );
+                } else if (rank % 5 === 0) {
+                return (
+                    <div className="flex items-center">
+                    <span className="text-lg font-semibold text-blue-600">#{rank}</span>
+                    <span className="ml-2 text-xs text-blue-500">MILESTONE</span>
+                    </div>
+                );
+                }
+                return <span className="text-lg font-semibold text-gray-600">#{rank}</span>;
+            };
+
+            return (
+                <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-screen">
+                    <div className="mb-8 text-center">
+                        <h1 className="text-3xl font-bold text-gray-800 mb-2">Personal Values Ranking</h1>
+                        <p className="text-gray-600">Rank these values by importance to you. Top 10 are highlighted in yellow, every 5th rank is marked in blue.</p>
+                    </div>
+
+                    <div className="space-y-2">
+                        {values.map((value, index) => (
+                        <div
+                            key={value.name}
+                            className={`p-4 rounded-lg border-2 transition-all duration-200 ${getRowStyle(index)}`}
+                        >
+                            <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                                <div className="flex items-center gap-4">
+                                {getRankDisplay(index)}
+                                <div>
+                                    <h3 className="font-bold text-gray-800 text-lg">{value.name}</h3>
+                                    <p className="text-gray-600 text-sm">{value.description}</p>
+                                </div>
+                                </div>
+                            </div>
+
+                            <div className="flex gap-1 ml-4">
+                                <button
+                                onClick={() => moveValue(index, 'top')}
+                                disabled={index === 0}
+                                className="p-2 rounded bg-blue-500 text-white hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                                title="Send to Top"
+                                >
+                                <ChevronsUp size={16} />
+                                </button>
+                                <button
+                                onClick={() => moveValue(index, 'up')}
+                                disabled={index === 0}
+                                className="p-2 rounded bg-green-500 text-white hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                                title="Move Up"
+                                >
+                                <ChevronUp size={16} />
+                                </button>
+                                <button
+                                onClick={() => moveValue(index, 'down')}
+                                disabled={index === values.length - 1}
+                                className="p-2 rounded bg-orange-500 text-white hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                                title="Move Down"
+                                >
+                                <ChevronDown size={16} />
+                                </button>
+                                <button
+                                onClick={() => moveValue(index, 'bottom')}
+                                disabled={index === values.length - 1}
+                                className="p-2 rounded bg-red-500 text-white hover:bg-red-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                                title="Send to Bottom"
+                                >
+                                <ChevronsDown size={16} />
+                                </button>
+                            </div>
+                            </div>
+                        </div>
+                        ))}
+                    </div>
+
+                    <div className="mt-8 p-4 bg-white rounded-lg border border-gray-200">
+                        <h2 className="text-xl font-bold text-gray-800 mb-2">Your Top 10 Values:</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        {values.slice(0, 10).map((value, index) => (
+                            <div key={value.name} className="flex items-center">
+                            <span className="font-bold text-yellow-600 mr-2">#{index + 1}</span>
+                            <span className="font-medium text-gray-800">{value.name}</span>
+                            </div>
+                        ))}
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="main-container" id="main-container">
-            <!-- Content will be populated by JavaScript -->
-        </div>
-    </div>
-
-    <script>
-        const allValues = [
-            { name: "ACCEPTANCE", description: "to be accepted as I am" },
-            { name: "ACCURACY", description: "to be accurate in my opinions and beliefs" },
-            { name: "ACHIEVEMENT", description: "to have important accomplishments" },
-            { name: "ADVENTURE", description: "to have new and exciting experiences" },
-            { name: "ATTRACTIVENESS", description: "to be physically attractive" },
-            { name: "AUTHORITY", description: "to be in charge of and responsible for others" },
-            { name: "AUTONOMY", description: "to be self-determined and independent" },
-            { name: "BEAUTY", description: "to appreciate beauty around me" },
-            { name: "CARING", description: "to take care of others" },
-            { name: "CHALLENGE", description: "to take on difficult tasks and problems" },
-            { name: "CHANGE", description: "to have a life full of change and variety" },
-            { name: "COMFORT", description: "to have a pleasant and comfortable life" },
-            { name: "COMMITMENT", description: "to make enduring, meaningful commitments" },
-            { name: "COMPASSION", description: "to feel and act on concern for others" },
-            { name: "CONTRIBUTION", description: "to make a lasting contribution in the world" },
-            { name: "COOPERATION", description: "to work collaboratively with others" },
-            { name: "COURTESY", description: "to be considerate and polite toward others" },
-            { name: "CREATIVITY", description: "to have new and original ideas" },
-            { name: "DEPENDABILITY", description: "to be reliable and trustworthy" },
-            { name: "DUTY", description: "to carry out my duties and obligations" },
-            { name: "EXCITEMENT", description: "to have a life full of thrills and stimulation" },
-            { name: "FAITHFULNESS", description: "to be loyal and true in relationships" },
-            { name: "FAME", description: "to be known and recognized" },
-            { name: "FAMILY", description: "to have a happy, loving family" },
-            { name: "FITNESS", description: "to be physically fit and strong" },
-            { name: "FLEXIBILITY", description: "to adjust to new circumstances easily" },
-            { name: "FORGIVENESS", description: "to be forgiving of others" },
-            { name: "FRIENDSHIP", description: "to have close friendships" },
-            { name: "FUN", description: "to play and have fun" },
-            { name: "GENEROSITY", description: "to give what I have to others" },
-            { name: "GENUINENESS", description: "to act in a manner that is true to who I am" },
-            { name: "GOD'S WILL", description: "to seek and obey the will of God" },
-            { name: "GROWTH", description: "to keep changing and growing" },
-            { name: "HEALTH", description: "to be physically well and healthy" },
-            { name: "HELPFULNESS", description: "to be helpful to others" },
-            { name: "HONESTY", description: "to be honest and truthful" },
-            { name: "HOPE", description: "to maintain a positive and optimistic outlook" },
-            { name: "HUMILITY", description: "to be modest and unassuming" },
-            { name: "HUMOR", description: "to see the humorous side of myself and the world" },
-            { name: "INDEPENDENCE", description: "to be free from dependence on others" },
-            { name: "INTIMACY", description: "to share my innermost experiences with others" },
-            { name: "JUSTICE", description: "to promote fair and equal treatment for all" },
-            { name: "KNOWLEDGE", description: "to learn and contribute valuable knowledge" },
-            { name: "LEISURE", description: "to take time to relax and enjoy" },
-            { name: "LOVED", description: "to be loved by those close to me" },
-            { name: "LOVING", description: "to give love to others" },
-            { name: "MASTERY", description: "to be competent in my everyday activities" },
-            { name: "MINDFULNESS", description: "to live conscious and mindful of the present moment" },
-            { name: "MODERATION", description: "to avoid excess and find a middle ground" },
-            { name: "MONOGAMY", description: "to have one close, loving relationship" },
-            { name: "NONCONFORMITY", description: "to question and challenge authority and norms" },
-            { name: "NURTURANCE", description: "to take care of and nurture others" },
-            { name: "OPENNESS", description: "to be open to new experiences, ideas, and options" },
-            { name: "ORDER", description: "to have a life that is well-ordered and organized" },
-            { name: "PASSION", description: "to have deep feelings about ideas, activities, or people" },
-            { name: "PLEASURE", description: "to feel good" },
-            { name: "POPULARITY", description: "to be well-liked by many people" },
-            { name: "POWER", description: "to have control over others" },
-            { name: "PURPOSE", description: "to have meaning and direction in my life" },
-            { name: "RATIONALITY", description: "to be guided by reason and logic" },
-            { name: "RISK", description: "to take risks and chances" },
-            { name: "ROMANCE", description: "to have an intense, exciting love in my life" },
-            { name: "SAFETY", description: "to be safe and secure" },
-            { name: "SELF-ACCEPTANCE", description: "to accept myself as I am" },
-            { name: "SELF-CONTROL", description: "to be disciplined in my own actions" },
-            { name: "SELF-ESTEEM", description: "to feel good about myself" },
-            { name: "SELF-KNOWLEDGE", description: "to have deep and honest understanding of myself" },
-            { name: "SERVICE", description: "to be of service to others" },
-            { name: "SEXUALITY", description: "to have an active and satisfying sex life" },
-            { name: "SIMPLICITY", description: "to live life simply, with minimal needs" },
-            { name: "SOLITUDE", description: "to have time and space where I can be apart from others" },
-            { name: "SPIRITUALITY", description: "to grow and mature spiritually" },
-            { name: "STABILITY", description: "to have a life that stays fairly consistent" },
-            { name: "TOLERANCE", description: "to accept and respect those who are different from me" },
-            { name: "TRADITION", description: "to follow respected patterns of the past" },
-            { name: "VIRTUE", description: "to live a morally pure and excellent life" },
-            { name: "WEALTH", description: "to have plenty of money" },
-            { name: "WORLD PEACE", description: "to work to promote peace in the world" }
-        ];
-
-        let gameState = {
-            phase: 'initial', // 'initial', 'ranking', 'complete'
-            selectedValues: [],
-            rankedValues: [],
-            currentComparisons: [],
-            comparisonIndex: 0,
-            eloRatings: {},
-            comparisonHistory: [],
-            inconsistencies: [],
-            skippedComparisons: []
+            );
         };
 
-        function initializeGame() {
-            gameState.phase = 'initial';
-            gameState.selectedValues = [];
-            gameState.rankedValues = [];
-            gameState.eloRatings = {};
-            gameState.comparisonHistory = [];
-            gameState.inconsistencies = [];
-            gameState.skippedComparisons = [];
-            
-            // Initialize ELO ratings (start everyone at 1500)
-            allValues.forEach(value => {
-                gameState.eloRatings[value.name] = 1500;
-            });
-            
-            showInitialSelection();
-        }
-
-        function showInitialSelection() {
-            const container = document.getElementById('main-container');
-            const roundInfo = document.getElementById('round-info');
-            const progressFill = document.getElementById('progress-fill');
-            
-            roundInfo.textContent = 'Phase 1: Select Your Important Values';
-            progressFill.style.width = '0%';
-            
-            let html = `
-                <div class="phase-indicator">
-                    <h3>Step 1: Initial Selection</h3>
-                    <p>Select all values that feel "Very Important" or "Quite Important" to you. Don't worry about ranking them yet - just pick the ones that resonate with you. We'll narrow them down later.</p>
+        function App() {
+            return (
+                <div>
+                    <ValuesRankingApp />
                 </div>
-                
-                <div class="selection-grid" id="selection-grid">
-            `;
-            
-            allValues.forEach(value => {
-                html += `
-                    <div class="value-card" onclick="toggleValueSelection('${value.name}')" id="card-${value.name}">
-                        <div class="value-name">${value.name}</div>
-                        <div class="value-description">${value.description}</div>
-                    </div>
-                `;
-            });
-            
-            html += `
-                </div>
-                
-                <div class="action-buttons">
-                    <button class="btn" onclick="proceedToRanking()" id="proceed-btn" disabled>
-                        Proceed to Ranking (<span id="selected-count">0</span> selected)
-                    </button>
-                    <button class="btn btn-danger" onclick="restartGame()">Restart</button>
-                </div>
-            `;
-            
-            container.innerHTML = html;
+            );
         }
 
-        function toggleValueSelection(valueName) {
-            const card = document.getElementById(`card-${valueName}`);
-            if (!card) return;
-            
-            if (gameState.selectedValues.includes(valueName)) {
-                // Deselect
-                gameState.selectedValues = gameState.selectedValues.filter(v => v !== valueName);
-                card.classList.remove('selected');
-            } else {
-                // Select
-                gameState.selectedValues.push(valueName);
-                card.classList.add('selected');
-            }
-            
-            // Update UI elements if they exist
-            const selectedCount = document.getElementById('selected-count');
-            const proceedBtn = document.getElementById('proceed-btn');
-            
-            if (selectedCount) {
-                selectedCount.textContent = gameState.selectedValues.length;
-            }
-            
-            if (proceedBtn) {
-                if (gameState.selectedValues.length >= 15) {
-                    proceedBtn.textContent = `Continue with Ranking (${gameState.selectedValues.length} selected)`;
-                    proceedBtn.disabled = false;
-                } else {
-                    proceedBtn.textContent = `Need at least 15 values (${gameState.selectedValues.length} selected)`;
-                    proceedBtn.disabled = true;
-                }
-            }
-        }
-
-        function proceedToRanking() {
-            if (gameState.selectedValues.length < 15) return;
-            
-            gameState.phase = 'ranking';
-            generateComparisons();
-            showRankingPhase();
-        }
-
-        function generateComparisons() {
-            gameState.currentComparisons = [];
-            const values = gameState.selectedValues;
-            
-            // Generate all possible pairs
-            for (let i = 0; i < values.length; i++) {
-                for (let j = i + 1; j < values.length; j++) {
-                    gameState.currentComparisons.push([values[i], values[j]]);
-                }
-            }
-            
-            // Shuffle comparisons for randomness
-            shuffleArray(gameState.currentComparisons);
-            gameState.comparisonIndex = 0;
-        }
-
-        function calculateEloUpdate(winnerRating, loserRating, kFactor = 32) {
-            // Calculate expected scores
-            const expectedWinner = 1 / (1 + Math.pow(10, (loserRating - winnerRating) / 400));
-            const expectedLoser = 1 / (1 + Math.pow(10, (winnerRating - loserRating) / 400));
-            
-            // Calculate new ratings
-            const newWinnerRating = winnerRating + kFactor * (1 - expectedWinner);
-            const newLoserRating = loserRating + kFactor * (0 - expectedLoser);
-            
-            return {
-                winnerRating: Math.round(newWinnerRating),
-                loserRating: Math.round(newLoserRating),
-                expectedWinner: expectedWinner
-            };
-        }
-
-        function detectInconsistencies() {
-            const inconsistencies = [];
-            const comparisons = gameState.comparisonHistory;
-            
-            // Check for direct contradictions and circular preferences
-            for (let i = 0; i < comparisons.length; i++) {
-                const comp1 = comparisons[i];
-                
-                // Check for direct contradictions (A>B and later B>A)
-                for (let j = i + 1; j < comparisons.length; j++) {
-                    const comp2 = comparisons[j];
-                    
-                    if ((comp1.winner === comp2.loser && comp1.loser === comp2.winner)) {
-                        inconsistencies.push({
-                            type: 'contradiction',
-                            comparison1: comp1,
-                            comparison2: comp2,
-                            description: `You chose ${comp1.winner} > ${comp1.loser}, but later chose ${comp2.winner} > ${comp2.loser}`
-                        });
-                    }
-                }
-                
-                // Check for circular preferences (A>B, B>C, C>A)
-                const winner = comp1.winner;
-                const loser = comp1.loser;
-                
-                for (let j = 0; j < comparisons.length; j++) {
-                    if (j === i) continue;
-                    const comp2 = comparisons[j];
-                    
-                    if (comp2.winner === loser) {
-                        // Found B>C, now look for C>A
-                        for (let k = 0; k < comparisons.length; k++) {
-                            if (k === i || k === j) continue;
-                            const comp3 = comparisons[k];
-                            
-                            if (comp3.winner === comp2.loser && comp3.loser === winner) {
-                                inconsistencies.push({
-                                    type: 'circular',
-                                    comparisons: [comp1, comp2, comp3],
-                                    description: `Circular preference: ${winner} > ${loser} > ${comp2.loser} > ${winner}`
-                                });
-                            }
-                        }
-                    }
-                }
-            }
-            
-            return inconsistencies;
-        }
-
-        function showInconsistencyWarning(inconsistencies) {
-            if (inconsistencies.length === 0) return '';
-            
-            let warningHtml = `
-                <div style="background: #fef3c7; border: 2px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
-                    <h4 style="color: #92400e; margin-bottom: 10px;">⚠️ Inconsistent Preferences Detected</h4>
-                    <p style="color: #92400e; margin-bottom: 10px;">We found some conflicting choices in your responses:</p>
-                    <ul style="color: #92400e; margin-left: 20px;">
-            `;
-            
-            inconsistencies.slice(0, 3).forEach(inc => {
-                warningHtml += `<li style="margin-bottom: 5px;">${inc.description}</li>`;
-            });
-            
-            if (inconsistencies.length > 3) {
-                warningHtml += `<li>...and ${inconsistencies.length - 3} more</li>`;
-            }
-            
-            warningHtml += `
-                    </ul>
-                    <p style="color: #92400e; margin-top: 10px; font-size: 0.9rem;">
-                        This is normal! The ELO system will balance these out. Your final rankings will reflect your overall preferences.
-                    </p>
-                </div>
-            `;
-            
-            return warningHtml;
-        }
-
-        function showRankingPhase() {
-            if (gameState.comparisonIndex >= gameState.currentComparisons.length) {
-                calculateFinalRankings();
-                showResults();
-                return;
-            }
-            
-            const container = document.getElementById('main-container');
-            const roundInfo = document.getElementById('round-info');
-            const progressFill = document.getElementById('progress-fill');
-            
-            const progress = (gameState.comparisonIndex / gameState.currentComparisons.length) * 100;
-            progressFill.style.width = `${progress}%`;
-            roundInfo.textContent = `Phase 2: Ranking (${gameState.comparisonIndex + 1}/${gameState.currentComparisons.length})`;
-            
-            const currentPair = gameState.currentComparisons[gameState.comparisonIndex];
-            const value1 = allValues.find(v => v.name === currentPair[0]);
-            const value2 = allValues.find(v => v.name === currentPair[1]);
-            
-            updateCurrentRankings();
-            
-            const html = `
-                <div class="phase-indicator">
-                    <h3>Step 2: Pairwise Ranking</h3>
-                    <p>Choose which value is more important to you. Each comparison helps build your personalized ranking.</p>
-                </div>
-                
-                <div class="ranking-container">
-                    <div class="comparison-section">
-                        <div class="matchup">
-                            <div class="value-card" onclick="selectValue(0)" id="value-0">
-                                <div class="value-name">${value1.name}</div>
-                                <div class="value-description">${value1.description}</div>
-                            </div>
-                            <div class="vs">VS</div>
-                            <div class="value-card" onclick="selectValue(1)" id="value-1">
-                                <div class="value-name">${value2.name}</div>
-                                <div class="value-description">${value2.description}</div>
-                            </div>
-                        </div>
-                        
-                        <div class="action-buttons">
-                            <button class="btn" onclick="confirmRankingChoice()" id="confirm-ranking-btn" disabled>Confirm Choice</button>
-                            <button class="btn btn-secondary" onclick="skipComparison()">Skip This Pair</button>
-                            <button class="btn btn-danger" onclick="restartGame()">Restart</button>
-                        </div>
-                    </div>
-                    
-                    <div class="current-rankings" id="current-rankings">
-                        <!-- Rankings will be populated here -->
-                    </div>
-                </div>
-            `;
-            
-            container.innerHTML = html;
-            updateCurrentRankings();
-        }
-
-        let selectedRankingValue = null;
-
-        function selectValue(index) {
-            selectedRankingValue = index;
-            
-            document.getElementById('value-0').classList.remove('selected');
-            document.getElementById('value-1').classList.remove('selected');
-            document.getElementById(`value-${index}`).classList.add('selected');
-            
-            document.getElementById('confirm-ranking-btn').disabled = false;
-        }
-
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        function confirmRankingChoice() {
-            if (selectedRankingValue === null) return;
-            
-            const currentPair = gameState.currentComparisons[gameState.comparisonIndex];
-            const winner = currentPair[selectedRankingValue];
-            const loser = currentPair[1 - selectedRankingValue];
-            
-            // Record the comparison
-            gameState.comparisonHistory.push({
-                winner: winner,
-                loser: loser,
-                timestamp: Date.now(),
-                comparisonIndex: gameState.comparisonIndex
-            });
-            
-            // Update ELO ratings
-            const winnerRating = gameState.eloRatings[winner];
-            const loserRating = gameState.eloRatings[loser];
-            const eloUpdate = calculateEloUpdate(winnerRating, loserRating);
-            
-            gameState.eloRatings[winner] = eloUpdate.winnerRating;
-            gameState.eloRatings[loser] = eloUpdate.loserRating;
-            
-            selectedRankingValue = null;
-            gameState.comparisonIndex++;
-            
-            // Check for inconsistencies every 10 comparisons
-            if (gameState.comparisonIndex % 10 === 0) {
-                gameState.inconsistencies = detectInconsistencies();
-            }
-            
-            showRankingPhase();
-        }
-
-        function skipComparison() {
-            selectedRankingValue = null;
-            gameState.comparisonIndex++;
-            showRankingPhase();
-        }
-
-        function updateCurrentRankings() {
-            const rankingsDiv = document.getElementById('current-rankings');
-            if (!rankingsDiv) return;
-            
-            // Sort selected values by current ELO ratings
-            const sortedValues = gameState.selectedValues
-                .map(name => ({
-                    name,
-                    rating: gameState.eloRatings[name],
-                    description: allValues.find(v => v.name === name).description
-                }))
-                .sort((a, b) => b.rating - a.rating);
-            
-            let html = `
-                <div class="ranking-title">Current Top 10 (ELO)</div>
-                <ul class="ranking-list">
-            `;
-            
-            sortedValues.slice(0, 10).forEach((value, index) => {
-                html += `
-                    <li class="ranking-item">
-                        <span class="rank-number">#${index + 1}</span>
-                        <span class="rank-value-name">${value.name}</span>
-                        <span style="font-size: 0.8rem; color: #6b7280; margin-left: auto;">${value.rating}</span>
-                    </li>
-                `;
-            });
-            
-            html += '</ul>';
-            
-            // Add inconsistency warning if any found
-            if (gameState.inconsistencies.length > 0) {
-                html += showInconsistencyWarning(gameState.inconsistencies);
-            }
-            
-            rankingsDiv.innerHTML = html;
-        }
-
-        function calculateFinalRankings() {
-            // Final inconsistency check
-            gameState.inconsistencies = detectInconsistencies();
-            
-            gameState.rankedValues = gameState.selectedValues
-                .map(name => ({
-                    name,
-                    eloRating: gameState.eloRatings[name],
-                    ...allValues.find(v => v.name === name)
-                }))
-                .sort((a, b) => b.eloRating - a.eloRating)
-                .slice(0, 10);
-            
-            gameState.phase = 'complete';
-        }
-
-        function showResults() {
-            const container = document.getElementById('main-container');
-            const roundInfo = document.getElementById('round-info');
-            const progressFill = document.getElementById('progress-fill');
-            
-            roundInfo.textContent = 'Complete: Your Top 10 Values';
-            progressFill.style.width = '100%';
-            
-            let html = `
-                <div class="results">
-                    <h2 style="font-size: 2.5rem; margin-bottom: 20px; color: #1f2937;">🎉 Your Top 10 Core Values 🎉</h2>
-                    <p style="font-size: 1.2rem; margin-bottom: 30px; color: #6b7280;">Based on your choices across ${gameState.currentComparisons.length} comparisons, these are your most important values:</p>
-                    
-                    <div class="final-rankings">
-            `;
-            
-            gameState.rankedValues.forEach((value, index) => {
-                html += `
-                    <div class="final-rank-card">
-                        <div class="final-rank-number">#${index + 1}</div>
-                        <div class="final-value-name">${value.name}</div>
-                        <div class="final-value-description">${value.description}</div>
-                    </div>
-                `;
-            });
-            
-            html += `
-                    </div>
-                    
-                    <div class="action-buttons">
-                        <button class="btn btn-success" onclick="exportResults()">Export Results</button>
-                        <button class="btn btn-danger" onclick="restartGame()">Start Over</button>
-                    </div>
-                </div>
-            `;
-            
-            container.innerHTML = html;
-        }
-
-        function exportResults() {
-            const results = {
-                timestamp: new Date().toISOString(),
-                methodology: "Swiss-style pairwise comparison with ELO scoring",
-                totalComparisons: gameState.currentComparisons.length,
-                selectedValues: gameState.selectedValues.length,
-                topTenValues: gameState.rankedValues.map((value, index) => ({
-                    rank: index + 1,
-                    name: value.name,
-                    description: value.description,
-                    score: value.score
-                }))
-            };
-            
-            const dataStr = JSON.stringify(results, null, 2);
-            const dataBlob = new Blob([dataStr], {type: 'application/json'});
-            const url = URL.createObjectURL(dataBlob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'personal-values-ranking.json';
-            link.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function restartGame() {
-            if (confirm('Are you sure you want to start over? This will lose all your current progress.')) {
-                initializeGame();
-            }
-        }
-
-        // Initialize the game
-        initializeGame();
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
     </script>
 </body>
 </html>
