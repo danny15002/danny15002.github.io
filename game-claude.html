@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle Defense</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        
+        canvas {
+            border: 2px solid #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%);
+        }
+        
+        .game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 24px;
+            display: none;
+        }
+        
+        .restart-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+        
+        .restart-btn:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <div class="game-over" id="gameOver">
+        <h2>Game Over!</h2>
+        <p>Final Score: <span id="finalScore">0</span></p>
+        <p>Level Reached: <span id="finalLevel">1</span></p>
+        <button class="restart-btn" onclick="restartGame()">Play Again</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const gameOverDiv = document.getElementById('gameOver');
+
+        // Game state
+        let gameState = {
+            lives: 1000,
+            score: 0,
+            level: 1,
+            enemies: [],
+            particles: [],
+            gameOver: false,
+            enemiesSpawned: 0,
+            enemiesEliminated: 0,
+            lastSpawnTime: 0,
+            levelStartTime: 0
+        };
+
+        // Game settings
+        let settings = {
+            enemyRadius: 0,
+            spawnInterval: 2000, // 2 seconds
+            enemySpeed: 0, // pixels per frame (calculated based on 5 second travel time)
+            enemiesPerLevel: 20,
+            playWidth: 0,
+            playHeight: 0
+        };
+
+        function initCanvas() {
+            const vh = window.innerHeight;
+            const vw = window.innerWidth;
+            
+            // Play area dimensions
+            settings.playHeight = vh;
+            settings.playWidth = Math.min(vw, vh / 3);
+            
+            canvas.width = settings.playWidth;
+            canvas.height = settings.playHeight;
+            
+            // Enemy radius is 2% of viewport height
+            settings.enemyRadius = vh * 0.02;
+            
+            // Enemy speed: should reach bottom in 5 seconds at 60fps
+            settings.enemySpeed = settings.playHeight / (5 * 60);
+        }
+
+        function getLevelSettings() {
+            const level = gameState.level;
+            const baseEnemies = 20;
+            const baseSpawnInterval = 2000;
+            const baseSpeed = settings.playHeight / (5 * 60);
+            
+            return {
+                enemyCount: baseEnemies + Math.floor((level - 1) / 5) * 5,
+                spawnInterval: baseSpawnInterval * Math.pow(0.99, level - 1),
+                speed: baseSpeed * Math.pow(1.01, level - 1)
+            };
+        }
+
+        class Enemy {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.radius = settings.enemyRadius;
+                this.speed = getLevelSettings().speed;
+                this.alive = true;
+            }
+            
+            update() {
+                this.y += this.speed;
+                
+                if (this.y - this.radius > settings.playHeight) {
+                    this.alive = false;
+                    gameState.lives--;
+                    if (gameState.lives <= 0) {
+                        endGame();
+                    }
+                }
+            }
+            
+            draw() {
+                ctx.fillStyle = '#ff4444';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Add a subtle gradient
+                const gradient = ctx.createRadialGradient(this.x - this.radius/3, this.y - this.radius/3, 0, this.x, this.y, this.radius);
+                gradient.addColorStop(0, '#ff6666');
+                gradient.addColorStop(1, '#cc0000');
+                ctx.fillStyle = gradient;
+                ctx.fill();
+            }
+            
+            isClicked(mouseX, mouseY) {
+                const distance = Math.sqrt(Math.pow(mouseX - this.x, 2) + Math.pow(mouseY - this.y, 2));
+                return distance <= this.radius;
+            }
+        }
+
+        class Particle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.vx = (Math.random() - 0.5) * 10;
+                this.vy = (Math.random() - 0.5) * 10;
+                this.life = 30;
+                this.maxLife = 30;
+                this.size = Math.random() * 4 + 2;
+            }
+            
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vx *= 0.98;
+                this.vy *= 0.98;
+                this.life--;
+            }
+            
+            draw() {
+                const alpha = this.life / this.maxLife;
+                ctx.fillStyle = `rgba(255, 215, 0, ${alpha})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size * alpha, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            isDead() {
+                return this.life <= 0;
+            }
+        }
+
+        function createExplosion(x, y) {
+            for (let i = 0; i < 8; i++) {
+                gameState.particles.push(new Particle(x, y));
+            }
+        }
+
+        function spawnEnemy() {
+            const currentLevelSettings = getLevelSettings();
+            
+            if (gameState.enemiesSpawned < currentLevelSettings.enemyCount) {
+                const now = Date.now();
+                
+                if (now - gameState.lastSpawnTime >= currentLevelSettings.spawnInterval) {
+                    const x = settings.enemyRadius + Math.random() * (settings.playWidth - 2 * settings.enemyRadius);
+                    const enemy = new Enemy(x, -settings.enemyRadius);
+                    gameState.enemies.push(enemy);
+                    gameState.enemiesSpawned++;
+                    gameState.lastSpawnTime = now;
+                }
+            }
+        }
+
+        function handleClick(event) {
+            if (gameState.gameOver) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const mouseY = event.clientY - rect.top;
+            
+            for (let i = gameState.enemies.length - 1; i >= 0; i--) {
+                const enemy = gameState.enemies[i];
+                if (enemy.isClicked(mouseX, mouseY)) {
+                    createExplosion(enemy.x, enemy.y);
+                    gameState.enemies.splice(i, 1);
+                    gameState.score++;
+                    gameState.enemiesEliminated++;
+                    break;
+                }
+            }
+        }
+
+        function handleTouch(event) {
+            event.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const touch = event.touches[0] || event.changedTouches[0];
+            const mouseX = touch.clientX - rect.left;
+            const mouseY = touch.clientY - rect.top;
+            
+            for (let i = gameState.enemies.length - 1; i >= 0; i--) {
+                const enemy = gameState.enemies[i];
+                if (enemy.isClicked(mouseX, mouseY)) {
+                    createExplosion(enemy.x, enemy.y);
+                    gameState.enemies.splice(i, 1);
+                    gameState.score++;
+                    gameState.enemiesEliminated++;
+                    break;
+                }
+            }
+        }
+
+        function checkLevelComplete() {
+            const currentLevelSettings = getLevelSettings();
+            
+            if (gameState.enemiesSpawned >= currentLevelSettings.enemyCount) {
+                // Level complete (all enemies spawned), advance to next level
+                gameState.level++;
+                gameState.enemiesSpawned = 0;
+                gameState.enemiesEliminated = 0;
+                gameState.lastSpawnTime = Date.now();
+            }
+        }
+
+        function update() {
+            if (gameState.gameOver) return;
+            
+            spawnEnemy();
+            checkLevelComplete();
+            
+            // Update enemies
+            for (let i = gameState.enemies.length - 1; i >= 0; i--) {
+                const enemy = gameState.enemies[i];
+                enemy.update();
+                
+                if (!enemy.alive) {
+                    gameState.enemies.splice(i, 1);
+                }
+            }
+            
+            // Update particles
+            for (let i = gameState.particles.length - 1; i >= 0; i--) {
+                const particle = gameState.particles[i];
+                particle.update();
+                
+                if (particle.isDead()) {
+                    gameState.particles.splice(i, 1);
+                }
+            }
+        }
+
+        function draw() {
+            // Clear canvas with gradient background
+            const gradient = ctx.createLinearGradient(0, 0, 0, settings.playHeight);
+            gradient.addColorStop(0, '#87CEEB');
+            gradient.addColorStop(1, '#E0F6FF');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, settings.playWidth, settings.playHeight);
+            
+            // Draw enemies
+            gameState.enemies.forEach(enemy => enemy.draw());
+            
+            // Draw particles
+            gameState.particles.forEach(particle => particle.draw());
+            
+            // Draw UI
+            drawUI();
+        }
+
+        function drawUI() {
+            ctx.font = 'bold 24px Arial';
+            ctx.fillStyle = '#333';
+            ctx.textAlign = 'left';
+            ctx.fillText(`Score: ${gameState.score}`, 20, 40);
+            
+            ctx.textAlign = 'right';
+            ctx.fillText(`Lives: ${gameState.lives}`, settings.playWidth - 20, 40);
+            
+            ctx.textAlign = 'center';
+            ctx.fillText(`Level: ${gameState.level}`, settings.playWidth / 2, 40);
+        }
+
+        function endGame() {
+            gameState.gameOver = true;
+            document.getElementById('finalScore').textContent = gameState.score;
+            document.getElementById('finalLevel').textContent = gameState.level;
+            gameOverDiv.style.display = 'block';
+        }
+
+        function restartGame() {
+            gameState = {
+                lives: 1000,
+                score: 0,
+                level: 1,
+                enemies: [],
+                particles: [],
+                gameOver: false,
+                enemiesSpawned: 0,
+                enemiesEliminated: 0,
+                lastSpawnTime: Date.now(),
+                levelStartTime: Date.now()
+            };
+            
+            gameOverDiv.style.display = 'none';
+            initCanvas();
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Event listeners
+        canvas.addEventListener('mousedown', handleClick);
+        canvas.addEventListener('touchstart', handleTouch);
+
+        window.addEventListener('resize', initCanvas);
+
+        // Initialize and start game
+        initCanvas();
+        gameState.lastSpawnTime = Date.now();
+        gameLoop();
+    </script>
+</body>
+</html>

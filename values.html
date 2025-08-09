@@ -128,9 +128,10 @@
                 }
 
                 if (newIndex !== index) {
-                const [movedValue] = newValues.splice(index, 1);
-                newValues.splice(newIndex, 0, movedValue);
-                setValues(newValues);
+                    const [movedValue] = newValues.splice(index, 1);
+                    newValues.splice(newIndex, 0, movedValue);
+                    setValues(newValues);
+                    localStorage.setItem('values', JSON.stringify(newValues));
                 }
             };
 
