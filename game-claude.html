@@ -101,15 +101,27 @@
             const vh = window.innerHeight;
             const vw = window.innerWidth;
             
-            // Play area dimensions
-            settings.playHeight = vh;
-            settings.playWidth = Math.min(vw, vh / 3);
+            // 9:16 aspect ratio (width:height)
+            const aspectRatio = 9 / 16;
+            
+            // Try fitting to full height first
+            let canvasHeight = vh;
+            let canvasWidth = canvasHeight * aspectRatio;
+            
+            // If width exceeds viewport, fit to full width instead
+            if (canvasWidth > vw) {
+                canvasWidth = vw;
+                canvasHeight = canvasWidth / aspectRatio;
+            }
+            
+            settings.playHeight = canvasHeight;
+            settings.playWidth = canvasWidth;
             
             canvas.width = settings.playWidth;
             canvas.height = settings.playHeight;
             
-            // Enemy radius is 2% of viewport height
-            settings.enemyRadius = vh * 0.02;
+            // Enemy radius is 2% of canvas height
+            settings.enemyRadius = settings.playHeight * 0.02;
             
             // Enemy speed: should reach bottom in 5 seconds at 60fps
             settings.enemySpeed = settings.playHeight / (5 * 60);
@@ -322,13 +334,11 @@
             ctx.font = 'bold 24px Arial';
             ctx.fillStyle = '#333';
             ctx.textAlign = 'left';
-            ctx.fillText(`Score: ${gameState.score}`, 20, 40);
+            ctx.fillText(`Level: ${gameState.level}`, 20, 40);
+            ctx.fillText(`Score: ${gameState.score}`, 20, 75);
             
             ctx.textAlign = 'right';
             ctx.fillText(`Lives: ${gameState.lives}`, settings.playWidth - 20, 40);
-            
-            ctx.textAlign = 'center';
-            ctx.fillText(`Level: ${gameState.level}`, settings.playWidth / 2, 40);
         }
 
         function endGame() {
