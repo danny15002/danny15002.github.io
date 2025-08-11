@@ -554,13 +554,13 @@
         function moveToTier(currentIndex, targetTier) {
             const item = rankedValues.splice(currentIndex, 1)[0];
             
-            // Calculate position at bottom of target tier
+            // Calculate position at top of target tier
             let insertPosition;
-            if (targetTier === 1) insertPosition = 9; // Bottom of tier 1 (position 10)
-            else if (targetTier === 2) insertPosition = 19; // Bottom of tier 2 (position 20)
-            else if (targetTier === 3) insertPosition = 29; // Bottom of tier 3 (position 30)
-            else if (targetTier === 4) insertPosition = 39; // Bottom of tier 4 (position 40)
-            else insertPosition = rankedValues.length; // Bottom of tier 5
+            if (targetTier === 1) insertPosition = 0; // top of tier 1 (position 10)
+            else if (targetTier === 2) insertPosition = 10; // top of tier 2 (position 20)
+            else if (targetTier === 3) insertPosition = 20; // top of tier 3 (position 30)
+            else if (targetTier === 4) insertPosition = 30; // top of tier 4 (position 40)
+            else insertPosition = 40; // top of tier 5
             
             // Adjust if current position was before insert position
             if (currentIndex < insertPosition) {
