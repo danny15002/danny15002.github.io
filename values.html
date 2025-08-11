@@ -317,6 +317,11 @@
         .values-list::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
+
+        .value-header {
+            display: flex;
+            gap: 8px;
+        }
     </style>
 </head>
 <body>
@@ -386,7 +391,8 @@
             <div class="action-buttons">
                 <button class="btn-large" onclick="exportResults()">Export Rankings</button>
                 <button class="btn-large btn-secondary" onclick="resetToAlphabetical()">Reset to Alphabetical</button>
-                <button class="btn-large btn-danger" onclick="randomize()">Randomize All</button>
+                <button class="btn-large btn-secondary" onclick="randomize()">Randomize All</button>
+                <button class="btn-large btn-danger" onclick="clearAllData()">Clear Saved Data</button>
             </div>
         </div>
     </div>
@@ -476,6 +482,51 @@
         // Sort values alphabetically initially
         let rankedValues = [...allValues].sort((a, b) => a.name.localeCompare(b.name));
 
+        // Auto-save and load functionality
+        const STORAGE_KEY = 'values-tier-ranking';
+
+        function saveToStorage() {
+            try {
+                const saveData = {
+                    rankedValues: rankedValues,
+                    timestamp: new Date().toISOString(),
+                    version: '1.0'
+                };
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(saveData));
+                console.log('Rankings saved to localStorage');
+            } catch (error) {
+                console.error('Failed to save to localStorage:', error);
+            }
+        }
+
+        function loadFromStorage() {
+            try {
+                const savedData = localStorage.getItem(STORAGE_KEY);
+                console.log('saved data', savedData);
+                if (savedData) {
+                    const parsed = JSON.parse(savedData);
+                    console.log('parsed', parsed);
+                    if (parsed.rankedValues && Array.isArray(parsed.rankedValues) && parsed.rankedValues.length === 78) {
+                        rankedValues = parsed.rankedValues;
+                        console.log('Rankings loaded from localStorage');
+                        return true;
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load from localStorage:', error);
+            }
+            return false;
+        }
+
+        function clearStorage() {
+            try {
+                localStorage.removeItem(STORAGE_KEY);
+                console.log('Rankings cleared from localStorage');
+            } catch (error) {
+                console.error('Failed to clear localStorage:', error);
+            }
+        }
+
         function getTierFromRank(rank) {
             if (rank <= 10) return 1;
             if (rank <= 20) return 2;
@@ -495,6 +546,8 @@
             // Insert at new position
             rankedValues.splice(newIndex, 0, item);
             
+            // Auto-save after change
+            saveToStorage();
             renderList();
         }
 
@@ -515,6 +568,9 @@
             }
             
             rankedValues.splice(insertPosition, 0, item);
+            
+            // Auto-save after change
+            saveToStorage();
             renderList();
         }
 
@@ -564,22 +620,28 @@
                 
                 html += `
                     <div class="value-item ${tierClass}">
-                        <div class="rank-number">${rank}</div>
-                        <div class="value-content">
-                            <div class="value-name">${value.name}</div>
-                            <div class="value-description">${value.description}</div>
+                        <div class="value-header">
+                            <div class="rank-number">${rank}</div>
+                            <div class="value-content">
+                                <div class="value-name">${value.name}</div>
+                                <div class="value-description">${value.description}</div>
+                            </div>
                         </div>
                         <div class="tier-indicator">Tier ${tier}</div>
                         <div class="controls">
-                            <button class="btn btn-extreme" onclick="moveToTop(${index})" title="Send to Top">TOP</button>
-                            <button class="btn btn-move" onclick="moveUp(${index})" ${index === 0 ? 'disabled' : ''} title="Move Up 1">↑</button>
-                            <button class="btn btn-move" onclick="moveDown(${index})" ${index === rankedValues.length - 1 ? 'disabled' : ''} title="Move Down 1">↓</button>
-                            <button class="btn btn-extreme" onclick="moveToBottom(${index})" title="Send to Bottom">BOT</button>
-                            <button class="btn btn-tier" onclick="moveToTier(${index}, 1)" title="Move to Tier 1">1</button>
-                            <button class="btn btn-tier" onclick="moveToTier(${index}, 2)" title="Move to Tier 2">2</button>
-                            <button class="btn btn-tier" onclick="moveToTier(${index}, 3)" title="Move to Tier 3">3</button>
-                            <button class="btn btn-tier" onclick="moveToTier(${index}, 4)" title="Move to Tier 4">4</button>
-                            <button class="btn btn-tier" onclick="moveToTier(${index}, 5)" title="Move to Tier 5">5</button>
+                            <div class="top-controls">
+                                <button class="btn btn-extreme" onclick="moveToTop(${index})" title="Send to Top">TOP</button>
+                                <button class="btn btn-move" onclick="moveUp(${index})" ${index === 0 ? 'disabled' : ''} title="Move Up 1">↑</button>
+                                <button class="btn btn-move" onclick="moveDown(${index})" ${index === rankedValues.length - 1 ? 'disabled' : ''} title="Move Down 1">↓</button>
+                                <button class="btn btn-extreme" onclick="moveToBottom(${index})" title="Send to Bottom">BOT</button>
+                            </div>
+                            <div class="bottom-controls">
+                                <button class="btn btn-tier" onclick="moveToTier(${index}, 1)" title="Move to Tier 1">1</button>
+                                <button class="btn btn-tier" onclick="moveToTier(${index}, 2)" title="Move to Tier 2">2</button>
+                                <button class="btn btn-tier" onclick="moveToTier(${index}, 3)" title="Move to Tier 3">3</button>
+                                <button class="btn btn-tier" onclick="moveToTier(${index}, 4)" title="Move to Tier 4">4</button>
+                                <button class="btn btn-tier" onclick="moveToTier(${index}, 5)" title="Move to Tier 5">5</button>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -590,22 +652,36 @@
         }
 
         function resetToAlphabetical() {
-            if (confirm('Reset all values to alphabetical order?')) {
+            if (confirm('Reset all values to alphabetical order? This will overwrite your saved rankings.')) {
                 rankedValues = [...allValues].sort((a, b) => a.name.localeCompare(b.name));
+                saveToStorage();
                 renderList();
             }
         }
 
         function randomize() {
-            if (confirm('Randomize the entire list?')) {
+            if (confirm('Randomize the entire list? This will overwrite your saved rankings.')) {
                 rankedValues = [...rankedValues].sort(() => Math.random() - 0.5);
+                saveToStorage();
+                renderList();
+            }
+        }
+
+        function clearAllData() {
+            if (confirm('Clear all saved data and reset to alphabetical order? This cannot be undone.')) {
+                clearStorage();
+                rankedValues = [...allValues].sort((a, b) => a.name.localeCompare(b.name));
                 renderList();
             }
         }
 
         function exportResults() {
+            const saveData = localStorage.getItem(STORAGE_KEY);
+            const lastSaved = saveData ? JSON.parse(saveData).timestamp : new Date().toISOString();
+            
             const results = {
                 timestamp: new Date().toISOString(),
+                lastSaved: lastSaved,
                 methodology: "Tier-based ranking with manual positioning",
                 totalValues: rankedValues.length,
                 ranking: rankedValues.map((value, index) => ({
@@ -633,8 +709,50 @@
             URL.revokeObjectURL(url);
         }
 
-        // Initialize the list
-        renderList();
+        // Initialize the list - load from storage if available
+        function initializeApp() {
+            const loaded = loadFromStorage();
+            console.log('loaded', loaded);
+            if (!loaded) {
+                // No saved data, use alphabetical order
+                rankedValues = [...allValues].sort((a, b) => a.name.localeCompare(b.name));
+            }
+            renderList();
+            
+            // Show notification if data was loaded
+            if (loaded) {
+                setTimeout(() => {
+                    const notification = document.createElement('div');
+                    notification.style.cssText = `
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        background: #10b981;
+                        color: white;
+                        padding: 12px 20px;
+                        border-radius: 8px;
+                        font-weight: bold;
+                        z-index: 1000;
+                        opacity: 0;
+                        transition: opacity 0.3s ease;
+                    `;
+                    notification.textContent = '✓ Previous rankings loaded from storage';
+                    document.body.appendChild(notification);
+                    
+                    // Fade in
+                    setTimeout(() => notification.style.opacity = '1', 100);
+                    
+                    // Fade out and remove
+                    setTimeout(() => {
+                        notification.style.opacity = '0';
+                        setTimeout(() => document.body.removeChild(notification), 300);
+                    }, 3000);
+                }, 500);
+            }
+        }
+
+        // Initialize the app
+        initializeApp();
     </script>
 </body>
 </html>
