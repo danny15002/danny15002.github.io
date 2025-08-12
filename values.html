@@ -10,14 +10,12 @@
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
-
         .container {
             max-width: 900px;
             margin: 0 auto;
@@ -26,19 +24,16 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             overflow: hidden;
         }
-
         .header {
             background: linear-gradient(135deg, #4f46e5, #7c3aed);
             color: white;
             padding: 30px;
             text-align: center;
         }
-
         .header h1 {
             font-size: 2.5rem;
             margin-bottom: 15px;
         }
-
         .tier-legend {
             display: flex;
             justify-content: center;
@@ -46,30 +41,25 @@
             flex-wrap: wrap;
             margin-top: 15px;
         }
-
         .tier-legend-item {
             display: flex;
             align-items: center;
             gap: 8px;
             font-size: 0.9rem;
         }
-
         .tier-color {
             width: 20px;
             height: 20px;
             border-radius: 4px;
         }
-
         .tier-1 { background: linear-gradient(135deg, #fef3c7, #fbbf24); }
         .tier-2 { background: linear-gradient(135deg, #e0f2fe, #0284c7); }
         .tier-3 { background: linear-gradient(135deg, #f0fdf4, #16a34a); }
         .tier-4 { background: linear-gradient(135deg, #fdf2f8, #db2777); }
         .tier-5 { background: linear-gradient(135deg, #f8fafc, #64748b); }
-
         .main-container {
             padding: 30px;
         }
-
         .instructions {
             background: #f0f9ff;
             border: 2px solid #0ea5e9;
@@ -77,25 +67,21 @@
             padding: 20px;
             margin-bottom: 30px;
         }
-
         .instructions h3 {
             color: #0369a1;
             margin-bottom: 10px;
         }
-
         .instructions p {
             color: #0369a1;
             margin-bottom: 8px;
             font-size: 0.95rem;
         }
-
         .values-list {
             max-height: 70vh;
             overflow-y: auto;
             border: 2px solid #e2e8f0;
             border-radius: 12px;
         }
-
         .value-item {
             display: flex;
             align-items: center;
@@ -103,15 +89,12 @@
             border-bottom: 1px solid rgba(255,255,255,0.3);
             transition: all 0.2s ease;
         }
-
         .value-item:last-child {
             border-bottom: none;
         }
-
         .value-item:hover {
             box-shadow: inset 0 0 0 2px rgba(255,255,255,0.5);
         }
-
         .rank-number {
             font-weight: bold;
             font-size: 1.1rem;
@@ -123,25 +106,21 @@
             padding: 8px;
             margin-right: 15px;
         }
-
         .value-content {
             flex: 1;
             margin-right: 15px;
         }
-
         .value-name {
             font-weight: bold;
             font-size: 1.1rem;
             color: #1f2937;
             margin-bottom: 4px;
         }
-
         .value-description {
             font-size: 0.9rem;
             color: #4b5563;
             line-height: 1.3;
         }
-
         .tier-indicator {
             background: rgba(255,255,255,0.8);
             color: #1f2937;
@@ -153,13 +132,11 @@
             min-width: 70px;
             text-align: center;
         }
-
         .controls {
             display: flex;
             gap: 6px;
             flex-wrap: wrap;
         }
-
         .btn {
             background: #4f46e5;
             color: white;
@@ -172,46 +149,40 @@
             transition: all 0.2s ease;
             min-width: 32px;
         }
-
         .btn:hover {
             background: #4338ca;
             transform: translateY(-1px);
         }
-
         .btn:active {
             transform: translateY(0);
         }
-
         .btn-move {
             background: #6b7280;
         }
-
         .btn-move:hover {
             background: #4b5563;
         }
-
         .btn-tier {
             background: #059669;
             min-width: 24px;
         }
-
         .btn-tier:hover {
             background: #047857;
         }
-
         .btn-extreme {
             background: #dc2626;
         }
-
         .btn-extreme:hover {
             background: #b91c1c;
         }
-
+        .btn-tier.active {
+            background: #047857;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
         .action-buttons {
             text-align: center;
             margin-top: 30px;
         }
-
         .btn-large {
             background: linear-gradient(135deg, #10b981, #059669);
             color: white;
@@ -224,20 +195,16 @@
             transition: all 0.3s ease;
             margin: 0 10px;
         }
-
         .btn-large:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
         }
-
         .btn-secondary {
             background: linear-gradient(135deg, #6b7280, #4b5563);
         }
-
         .btn-danger {
             background: linear-gradient(135deg, #ef4444, #dc2626);
         }
-
         .stats {
             display: flex;
             justify-content: space-around;
@@ -247,77 +214,62 @@
             margin-bottom: 20px;
             font-size: 0.9rem;
         }
-
         .stat-item {
             text-align: center;
         }
-
         .stat-number {
             font-size: 1.5rem;
             font-weight: bold;
             color: #1f2937;
         }
-
         .stat-label {
             color: #6b7280;
             margin-top: 4px;
         }
-
         @media (max-width: 768px) {
             .container {
                 margin: 10px;
                 border-radius: 15px;
             }
-
             .main-container {
                 padding: 20px;
             }
-
             .value-item {
                 flex-direction: column;
                 align-items: stretch;
                 gap: 10px;
                 padding: 15px;
             }
-
             .rank-number {
                 align-self: flex-start;
                 margin-right: 0;
                 margin-bottom: 5px;
             }
-
             .controls {
                 justify-content: center;
             }
-
             .tier-legend {
                 gap: 10px;
             }
-
             .header h1 {
                 font-size: 2rem;
             }
         }
-
         /* Scrollbar styling */
         .values-list::-webkit-scrollbar {
             width: 8px;
         }
-
         .values-list::-webkit-scrollbar-track {
             background: #f1f5f9;
             border-radius: 4px;
         }
-
         .values-list::-webkit-scrollbar-thumb {
             background: #cbd5e1;
             border-radius: 4px;
         }
-
         .values-list::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
-
         .value-header {
             display: flex;
             gap: 8px;
@@ -347,20 +299,19 @@
                 </div>
                 <div class="tier-legend-item">
                     <div class="tier-color tier-5"></div>
-                    <span>Tier 5 (Ranks 41-72)</span>
+                    <span>Tier 5 (Any quantity)</span>
                 </div>
             </div>
         </div>
-
         <div class="main-container">
             <div class="instructions">
                 <h3>How to Use:</h3>
-                <p><strong>Tier Buttons (1-5):</strong> Move value to bottom of that tier</p>
-                <p><strong>↑/↓:</strong> Move up or down one position (can cross tiers)</p>
-                <p><strong>TOP/BOT:</strong> Send to very top or bottom of entire list</p>
-                <p><strong>Tiers:</strong> Each tier holds exactly 10 values. Adding to a full tier pushes others down.</p>
+                <p><strong>Tier Buttons (1-5):</strong> Move value to bottom of that tier (reorders automatically)</p>
+                <p><strong>↑/↓:</strong> Move up or down one position within the list</p>
+                <p><strong>TOP:</strong> Send to very top and make Tier 1</p>
+                <p><strong>BOT:</strong> Send to very bottom and make Tier 5</p>
+                <p><strong>Smart Tiers:</strong> Values are grouped by tier. Any quantity per tier, automatically ordered!</p>
             </div>
-
             <div class="stats" id="stats">
                 <div class="stat-item">
                     <div class="stat-number" id="tier1-count">10</div>
@@ -379,15 +330,13 @@
                     <div class="stat-label">Tier 4</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number" id="tier5-count">32</div>
+                    <div class="stat-number" id="tier5-count">38</div>
                     <div class="stat-label">Tier 5</div>
                 </div>
             </div>
-
             <div class="values-list" id="values-list">
                 <!-- Values will be populated by JavaScript -->
             </div>
-
             <div class="action-buttons">
                 <button class="btn-large" onclick="exportResults()">Export Rankings</button>
                 <button class="btn-large btn-secondary" onclick="resetToAlphabetical()">Reset to Alphabetical</button>
@@ -396,7 +345,6 @@
             </div>
         </div>
     </div>
-
     <script>
         const allValues = [
             { name: "ACCEPTANCE", description: "to be accepted as I am" },
@@ -478,13 +426,15 @@
             { name: "WEALTH", description: "to have plenty of money" },
             { name: "WORLD PEACE", description: "to work to promote peace in the world" }
         ];
-
-        // Sort values alphabetically initially
-        let rankedValues = [...allValues].sort((a, b) => a.name.localeCompare(b.name));
-
+        // Sort values alphabetically initially and assign default tiers
+        let rankedValues = [...allValues]
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map((value, index) => ({
+                ...value,
+                tier: index < 10 ? 1 : index < 20 ? 2 : index < 30 ? 3 : index < 40 ? 4 : 5
+            }));
         // Auto-save and load functionality
         const STORAGE_KEY = 'values-tier-ranking';
-
         function saveToStorage() {
             try {
                 const saveData = {
@@ -498,7 +448,6 @@
                 console.error('Failed to save to localStorage:', error);
             }
         }
-
         function loadFromStorage() {
             try {
                 const savedData = localStorage.getItem(STORAGE_KEY);
@@ -517,7 +466,6 @@
             }
             return false;
         }
-
         function clearStorage() {
             try {
                 localStorage.removeItem(STORAGE_KEY);
@@ -526,22 +474,27 @@
                 console.error('Failed to clear localStorage:', error);
             }
         }
-
         function getTierFromRank(rank) {
-            if (rank <= 10) return 1;
-            if (rank <= 20) return 2;
-            if (rank <= 30) return 3;
-            if (rank <= 40) return 4;
-            return 5;
+            // This function is no longer used since tiers are independent of rank
+            return 5; // Default fallback
         }
 
+        function getTierFromValue(value) {
+            return value.tier || 5;
+        }
         function getTierClass(tier) {
             return `tier-${tier}`;
         }
-
         function moveToPosition(currentIndex, newIndex) {
             // Remove the item from current position
             const item = rankedValues.splice(currentIndex, 1)[0];
+
+            if (newIndex === 0)
+                item.tier = 1;
+
+            if (newIndex === 77) {
+                item.tier = 5;
+            }
             
             // Insert at new position
             rankedValues.splice(newIndex, 0, item);
@@ -550,56 +503,52 @@
             saveToStorage();
             renderList();
         }
-
         function moveToTier(currentIndex, targetTier) {
             const item = rankedValues.splice(currentIndex, 1)[0];
+            item.tier = targetTier;
             
-            // Calculate position at top of target tier
-            let insertPosition;
-            if (targetTier === 1) insertPosition = 0; // top of tier 1 (position 10)
-            else if (targetTier === 2) insertPosition = 10; // top of tier 2 (position 20)
-            else if (targetTier === 3) insertPosition = 20; // top of tier 3 (position 30)
-            else if (targetTier === 4) insertPosition = 30; // top of tier 4 (position 40)
-            else insertPosition = 40; // top of tier 5
+            // Find the position to insert at the bottom of the target tier
+            let insertPosition = 0;
             
-            // Adjust if current position was before insert position
-            if (currentIndex < insertPosition) {
-                insertPosition--;
+            // Count through the list to find where this tier ends
+            for (let i = 0; i < rankedValues.length; i++) {
+                if (rankedValues[i].tier <= targetTier) {
+                    insertPosition = i + 1;
+                }
             }
             
+            // Insert at the calculated position
             rankedValues.splice(insertPosition, 0, item);
             
             // Auto-save after change
             saveToStorage();
             renderList();
         }
-
         function moveUp(index) {
             if (index > 0) {
                 moveToPosition(index, index - 1);
             }
         }
-
         function moveDown(index) {
             if (index < rankedValues.length - 1) {
                 moveToPosition(index, index + 1);
             }
         }
-
         function moveToTop(index) {
             moveToPosition(index, 0);
         }
-
         function moveToBottom(index) {
+            console.log('moving to bottom', index);
             moveToPosition(index, rankedValues.length - 1);
         }
-
         function updateStats() {
             const tierCounts = [0, 0, 0, 0, 0]; // Tiers 1-5
             
-            rankedValues.forEach((value, index) => {
-                const tier = getTierFromRank(index + 1);
-                tierCounts[tier - 1]++;
+            rankedValues.forEach((value) => {
+                const tier = getTierFromValue(value);
+                if (tier >= 1 && tier <= 5) {
+                    tierCounts[tier - 1]++;
+                }
             });
             
             document.getElementById('tier1-count').textContent = tierCounts[0];
@@ -608,15 +557,16 @@
             document.getElementById('tier4-count').textContent = tierCounts[3];
             document.getElementById('tier5-count').textContent = tierCounts[4];
         }
-
         function renderList() {
             const container = document.getElementById('values-list');
             
             let html = '';
             rankedValues.forEach((value, index) => {
                 const rank = index + 1;
-                const tier = getTierFromRank(rank);
+                const tier = getTierFromValue(value);
                 const tierClass = getTierClass(tier);
+                
+                console.log(`Rendering ${value.name}: tier=${tier}, tierClass=${tierClass}`);
                 
                 html += `
                     <div class="value-item ${tierClass}">
@@ -636,11 +586,11 @@
                                 <button class="btn btn-extreme" onclick="moveToBottom(${index})" title="Send to Bottom">BOT</button>
                             </div>
                             <div class="bottom-controls">
-                                <button class="btn btn-tier" onclick="moveToTier(${index}, 1)" title="Move to Tier 1">1</button>
-                                <button class="btn btn-tier" onclick="moveToTier(${index}, 2)" title="Move to Tier 2">2</button>
-                                <button class="btn btn-tier" onclick="moveToTier(${index}, 3)" title="Move to Tier 3">3</button>
-                                <button class="btn btn-tier" onclick="moveToTier(${index}, 4)" title="Move to Tier 4">4</button>
-                                <button class="btn btn-tier" onclick="moveToTier(${index}, 5)" title="Move to Tier 5">5</button>
+                                <button class="btn btn-tier ${tier === 1 ? 'active' : ''}" onclick="moveToTier(${index}, 1)" title="Move to Tier 1">1</button>
+                                <button class="btn btn-tier ${tier === 2 ? 'active' : ''}" onclick="moveToTier(${index}, 2)" title="Move to Tier 2">2</button>
+                                <button class="btn btn-tier ${tier === 3 ? 'active' : ''}" onclick="moveToTier(${index}, 3)" title="Move to Tier 3">3</button>
+                                <button class="btn btn-tier ${tier === 4 ? 'active' : ''}" onclick="moveToTier(${index}, 4)" title="Move to Tier 4">4</button>
+                                <button class="btn btn-tier ${tier === 5 ? 'active' : ''}" onclick="moveToTier(${index}, 5)" title="Move to Tier 5">5</button>
                             </div>
                         </div>
                     </div>
@@ -650,15 +600,18 @@
             container.innerHTML = html;
             updateStats();
         }
-
         function resetToAlphabetical() {
             if (confirm('Reset all values to alphabetical order? This will overwrite your saved rankings.')) {
-                rankedValues = [...allValues].sort((a, b) => a.name.localeCompare(b.name));
+                rankedValues = [...allValues]
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map((value, index) => ({
+                        ...value,
+                        tier: index < 10 ? 1 : index < 20 ? 2 : index < 30 ? 3 : index < 40 ? 4 : 5
+                    }));
                 saveToStorage();
                 renderList();
             }
         }
-
         function randomize() {
             if (confirm('Randomize the entire list? This will overwrite your saved rankings.')) {
                 rankedValues = [...rankedValues].sort(() => Math.random() - 0.5);
@@ -666,15 +619,18 @@
                 renderList();
             }
         }
-
         function clearAllData() {
             if (confirm('Clear all saved data and reset to alphabetical order? This cannot be undone.')) {
                 clearStorage();
-                rankedValues = [...allValues].sort((a, b) => a.name.localeCompare(b.name));
+                rankedValues = [...allValues]
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map((value, index) => ({
+                        ...value,
+                        tier: index < 10 ? 1 : index < 20 ? 2 : index < 30 ? 3 : index < 40 ? 4 : 5
+                    }));
                 renderList();
             }
         }
-
         function exportResults() {
             const saveData = localStorage.getItem(STORAGE_KEY);
             const lastSaved = saveData ? JSON.parse(saveData).timestamp : new Date().toISOString();
@@ -686,16 +642,16 @@
                 totalValues: rankedValues.length,
                 ranking: rankedValues.map((value, index) => ({
                     rank: index + 1,
-                    tier: getTierFromRank(index + 1),
+                    tier: getTierFromValue(value),
                     name: value.name,
                     description: value.description
                 })),
                 tierBreakdown: {
-                    tier1: rankedValues.slice(0, 10).map(v => v.name),
-                    tier2: rankedValues.slice(10, 20).map(v => v.name),
-                    tier3: rankedValues.slice(20, 30).map(v => v.name),
-                    tier4: rankedValues.slice(30, 40).map(v => v.name),
-                    tier5: rankedValues.slice(40).map(v => v.name)
+                    tier1: rankedValues.filter(v => getTierFromValue(v) === 1).map(v => v.name),
+                    tier2: rankedValues.filter(v => getTierFromValue(v) === 2).map(v => v.name),
+                    tier3: rankedValues.filter(v => getTierFromValue(v) === 3).map(v => v.name),
+                    tier4: rankedValues.filter(v => getTierFromValue(v) === 4).map(v => v.name),
+                    tier5: rankedValues.filter(v => getTierFromValue(v) === 5).map(v => v.name)
                 }
             };
             
@@ -708,14 +664,18 @@
             link.click();
             URL.revokeObjectURL(url);
         }
-
         // Initialize the list - load from storage if available
         function initializeApp() {
             const loaded = loadFromStorage();
             console.log('loaded', loaded);
             if (!loaded) {
-                // No saved data, use alphabetical order
-                rankedValues = [...allValues].sort((a, b) => a.name.localeCompare(b.name));
+                // No saved data, use alphabetical order with default tiers
+                rankedValues = [...allValues]
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map((value, index) => ({
+                        ...value,
+                        tier: index < 10 ? 1 : index < 20 ? 2 : index < 30 ? 3 : index < 40 ? 4 : 5
+                    }));
             }
             renderList();
             
@@ -750,7 +710,6 @@
                 }, 500);
             }
         }
-
         // Initialize the app
         initializeApp();
     </script>
