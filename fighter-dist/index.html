@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -25,12 +25,14 @@
       }
       
       #root {
-        height: 100vh;
-        width: 100vw;
+        height: 100vh; /* Fallback */
+        height: calc(var(--vh, 1vh) * 100);
+        width: 100vw; /* Fallback */
+        width: calc(var(--vw, 1vw) * 100);
       }
     </style>
-    <script type="module" crossorigin src="assets/index-d3u5e7cc.js"></script>
-    <link rel="stylesheet" crossorigin href="assets/index-CrWClNeL.css">
+    <script type="module" crossorigin src="/assets/index-BtpAEBss.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DJ3VL6mg.css">
   </head>
   <body>
     <div id="root"></div>
