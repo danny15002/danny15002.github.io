@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Beautiful! 💜</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #2c1810;
+            overflow-x: hidden;
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 10px 20px rgba(118, 75, 162, 0.3);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #9c27b0, #673ab7, #3f51b5, #9c27b0);
+            background-size: 200% 100%;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #7b1fa2;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(123, 31, 162, 0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            color: #5e35b1;
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .map-container {
+            height: 60vh;
+            width: 100%;
+            position: relative;
+            z-index: 5;
+        }
+
+        .map-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            transition: all 0.5s ease;
+        }
+
+        .cards-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .celebration-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            max-width: 800px;
+            margin: 0 auto;
+            padding-bottom: 40px;
+        }
+
+        .day-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(118, 75, 162, 0.2);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            position: relative;
+        }
+
+        .day-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(118, 75, 162, 0.3);
+            border-color: #9c27b0;
+        }
+
+        .day-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #e91e63, #9c27b0, #673ab7);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .day-title {
+            font-size: 1.6em;
+            color: #7b1fa2;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .day-date {
+            font-size: 1em;
+            color: #5e35b1;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .activity {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f8f4ff, #ede7f6);
+            border-radius: 12px;
+            border-left: 4px solid #9c27b0;
+        }
+
+        .activity h3 {
+            color: #6a1b9a;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .activity p {
+            color: #4a148c;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .map-button {
+            background: linear-gradient(135deg, #9c27b0, #673ab7);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);
+        }
+
+        .map-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(156, 39, 176, 0.4);
+            background: linear-gradient(135deg, #ad42c4, #7c4dff);
+        }
+
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            color: rgba(233, 30, 99, 0.6);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(118, 75, 162, 0.2);
+            margin-top: 20px;
+        }
+
+        .footer h2 {
+            color: #7b1fa2;
+            font-size: 1.8em;
+            margin-bottom: 12px;
+        }
+
+        .footer p {
+            color: #5e35b1;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .header p {
+                font-size: 1em;
+            }
+            
+            .cards-container {
+                padding: 15px;
+            }
+            
+            .day-card {
+                padding: 20px;
+            }
+
+            .map-container {
+                height: 40vh;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .header p {
+                font-size: 0.9em;
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-hearts">
+        <div class="heart" style="left: 10%; animation-delay: 0s;">💜</div>
+        <div class="heart" style="left: 20%; animation-delay: 1s;">💕</div>
+        <div class="heart" style="left: 30%; animation-delay: 2s;">💜</div>
+        <div class="heart" style="left: 40%; animation-delay: 3s;">💖</div>
+        <div class="heart" style="left: 50%; animation-delay: 4s;">💜</div>
+        <div class="heart" style="left: 60%; animation-delay: 5s;">💕</div>
+        <div class="heart" style="left: 70%; animation-delay: 0.5s;">💜</div>
+        <div class="heart" style="left: 80%; animation-delay: 1.5s;">💖</div>
+        <div class="heart" style="left: 90%; animation-delay: 2.5s;">💜</div>
+    </div>
+
+    <div class="main-container">
+        <div class="header">
+            <h1>Happy Birthday Beautiful!</h1>
+            <p>A magical weekend celebration just for you 🎉</p>
+        </div>
+
+        <div class="map-container">
+            <iframe id="mapFrame" class="map-frame"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d423286.27404185456!2d-118.69191969999999!3d34.020161!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c2c75ddc27da13%3A0xe22fdf6f254608f4!2sLos%20Angeles%2C%20CA!5e0!3m2!1sen!2sus!4v1635000000000!5m2!1sen!2sus"
+                allowfullscreen="" loading="lazy">
+            </iframe>
+        </div>
+
+        <div class="cards-container">
+            <div class="celebration-grid">
+                <!-- Friday, September 5th -->
+                <div class="day-card">
+                    <div class="day-title">🍽️ Friday Night</div>
+                    <div class="day-date">September 5th, 2025</div>
+                    <div class="activity">
+                        <h3>Birthday Dinner - 7:00 PM</h3>
+                        <p>An intimate and special dinner at Manuela's to kick off your birthday celebration. We'll toast to another amazing year of you!</p>
+                        <button class="map-button" onclick="showLocation('manuela')">📍 View Map</button>
+                    </div>
+                </div>
+
+                <!-- Saturday, September 6th -->
+                <div class="day-card">
+                    <div class="day-title">🎵 Saturday Fun</div>
+                    <div class="day-date">September 6th, 2025</div>
+                    <div class="activity">
+                        <h3>Sun Soaked Festival - 12:00 PM</h3>
+                        <p>Dancing, music, and pure joy! Let's get lost in the rhythm and celebrate with amazing live performances at this beachside festival.</p>
+                        <button class="map-button" onclick="showLocation('festival')">📍 View Map</button>
+                    </div>
+                    <div class="activity">
+                        <h3>Cozy Airbnb</h3>
+                        <p>Our perfect home away from home for the weekend. Relax and unwind in style in Long Beach after the festival!</p>
+                        <button class="map-button" onclick="showLocation('airbnb')">📍 View Map</button>
+                    </div>
+                </div>
+
+                <!-- Sunday -->
+                <div class="day-card">
+                    <div class="day-title">☀️ Sunday Bliss</div>
+                    <div class="day-date">September 7th, 2025</div>
+                    <div class="activity">
+                        <h3>Leisurely Brunch - 12:00 PM</h3>
+                        <p>Start the day with delicious food and mimosas at Lola's. The perfect way to ease into a relaxing Sunday.</p>
+                        <button class="map-button" onclick="showLocation('brunch')">📍 View Map</button>
+                    </div>
+                    <div class="activity">
+                        <h3>Beach Time</h3>
+                        <p>Sun, sand, and serenity. Let's soak up the sunshine and enjoy the beautiful coastline together.</p>
+                        <button class="map-button" onclick="showLocation('beach')">📍 View Map</button>
+                    </div>
+                </div>
+
+                <div class="footer">
+                    <h2>You're Amazing! 💜</h2>
+                    <p>This weekend is all about celebrating the incredible woman you are. Every moment, every laugh, every memory we'll make - it's all for you. Here's to love, laughter, and the most wonderful birthday celebration!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const locations = {
+            manuela: {
+                name: "Manuela's Restaurant",
+                embed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3305.6234567890123!2d-118.253!3d34.0364!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c2c7b89b5e4f9d%3A0x12345678!2s907%20E%203rd%20St%2C%20Los%20Angeles%2C%20CA%2090013!5e0!3m2!1sen!2sus!4v1635000000001!5m2!1sen!2sus"
+            },
+            festival: {
+                name: "Sun Soaked Festival",
+                embed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3309.1234567890123!2d-118.024!3d33.6595!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80dd27b5e4f9d123%3A0x87654321!2s21601%20Pacific%20Coast%20Hwy%2C%20Huntington%20Beach%2C%20CA%2092646!5e0!3m2!1sen!2sus!4v1635000000002!5m2!1sen!2sus"
+            },
+            brunch: {
+                name: "Lola's Restaurant",
+                embed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3316.7890123456789!2d-118.185!3d33.8089!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80dd31b5e4f9d456%3A0x11111111!2s4140%20Atlantic%20Ave%2C%20Long%20Beach%2C%20CA%2090807!5e0!3m2!1sen!2sus!4v1635000000003!5m2!1sen!2sus"
+            },
+            airbnb: {
+                name: "Long Beach Area",
+                embed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d52949.123456789!2d-118.185!3d33.7701!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80dd313158bdfa49%3A0x5b9c5272c24b5c72!2sLong%20Beach%2C%20CA!5e0!3m2!1sen!2sus!4v1635000000004!5m2!1sen!2sus"
+            },
+            beach: {
+                name: "Long Beach Coastline",
+                embed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d26474.123456789!2d-118.145!3d33.7701!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80dd313158bdfa49%3A0x5b9c5272c24b5c72!2sLong%20Beach%20Coastline!5e0!3m2!1sen!2sus!4v1635000000005!5m2!1sen!2sus"
+            }
+        };
+
+        let currentLocation = '';
+
+        function showLocation(location) {
+            if (locations[location] && currentLocation !== location) {
+                currentLocation = location;
+                const mapFrame = document.getElementById('mapFrame');
+                
+                // Add a subtle loading effect
+                mapFrame.style.opacity = '0.7';
+                
+                setTimeout(() => {
+                    mapFrame.src = locations[location].embed;
+                    mapFrame.style.opacity = '1';
+                    
+                    // Scroll to top to show the map
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                }, 200);
+                
+                // Add a subtle flash effect to indicate the change
+                createLocationSparkles();
+            }
+        }
+
+        function createLocationSparkles() {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const sparkle = document.createElement('div');
+                    sparkle.innerHTML = '✨';
+                    sparkle.style.position = 'fixed';
+                    sparkle.style.left = Math.random() * 100 + 'vw';
+                    sparkle.style.top = Math.random() * 60 + 'vh';
+                    sparkle.style.fontSize = Math.random() * 15 + 10 + 'px';
+                    sparkle.style.color = '#9c27b0';
+                    sparkle.style.pointerEvents = 'none';
+                    sparkle.style.zIndex = '1000';
+                    sparkle.style.animation = 'sparkle 1.5s ease-in-out forwards';
+                    
+                    document.body.appendChild(sparkle);
+                    
+                    setTimeout(() => sparkle.remove(), 1500);
+                }, i * 100);
+            }
+        }
+
+        // Add sparkle animation CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes sparkle {
+                0% { opacity: 0; transform: scale(0) rotate(0deg); }
+                50% { opacity: 1; transform: scale(1) rotate(180deg); }
+                100% { opacity: 0; transform: scale(0) rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Create occasional sparkles
+        setInterval(() => {
+            if (Math.random() > 0.7) {
+                const sparkle = document.createElement('div');
+                sparkle.innerHTML = '💜';
+                sparkle.style.position = 'fixed';
+                sparkle.style.left = Math.random() * 100 + 'vw';
+                sparkle.style.top = Math.random() * 100 + 'vh';
+                sparkle.style.fontSize = '18px';
+                sparkle.style.pointerEvents = 'none';
+                sparkle.style.zIndex = '1000';
+                sparkle.style.animation = 'sparkle 2s ease-in-out forwards';
+                
+                document.body.appendChild(sparkle);
+                
+                setTimeout(() => sparkle.remove(), 2000);
+            }
+        }, 3000);
+        
+        // Add click sparkles
+        document.addEventListener('click', (e) => {
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    const sparkle = document.createElement('div');
+                    sparkle.innerHTML = '💜';
+                    sparkle.style.position = 'fixed';
+                    sparkle.style.left = e.clientX + (Math.random() - 0.5) * 100 + 'px';
+                    sparkle.style.top = e.clientY + (Math.random() - 0.5) * 100 + 'px';
+                    sparkle.style.fontSize = '16px';
+                    sparkle.style.pointerEvents = 'none';
+                    sparkle.style.zIndex = '1000';
+                    sparkle.style.animation = 'sparkle 1s ease-in-out forwards';
+                    
+                    document.body.appendChild(sparkle);
+                    
+                    setTimeout(() => sparkle.remove(), 1000);
+                }, i * 100);
+            }
+        });
+    </script>
+</body>
+</html>
