@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bellini Fest 🥂</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Poppins:wght@200;300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #0a0a0a;
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        .background-texture {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, rgba(255, 215, 0, 0.06) 0%, transparent 50%),
+                linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            z-index: -2;
+        }
+        
+        .splash-effects {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.02) 0%, transparent 30%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 50% 10%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            animation: splashPulse 4s ease-in-out infinite;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .presents-text {
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            color: #999;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            font-weight: 300;
+        }
+        
+        .champagne-bottles {
+            position: relative;
+            margin: 40px 0 60px 0;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+        
+        .bottle {
+            width: 60px;
+            height: 180px;
+            background: linear-gradient(135deg, #d4af37 0%, #ffd700 50%, #d4af37 100%);
+            margin: 0 15px;
+            border-radius: 8px 8px 4px 4px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+            animation: bottleFloat 3s ease-in-out infinite;
+            animation-delay: var(--delay);
+        }
+        
+        .bottle::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 25px;
+            background: #d4af37;
+            border-radius: 4px 4px 8px 8px;
+        }
+        
+        .bottle::after {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 15px;
+            height: 8px;
+            background: #333;
+            border-radius: 2px;
+        }
+        
+        .splash {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 60px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.4) 40%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0;
+            animation: splashEffect 3s ease-in-out infinite;
+            animation-delay: var(--delay);
+        }
+        
+        .main-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 6rem;
+            font-weight: 400;
+            font-style: italic;
+            color: #d4af37;
+            margin-bottom: 0;
+            text-shadow: 0 4px 20px rgba(212, 175, 55, 0.5);
+            letter-spacing: -2px;
+            line-height: 0.9;
+            background: linear-gradient(135deg, #d4af37 0%, #ffd700 50%, #d4af37 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% 200%;
+            animation: goldShine 3s ease-in-out infinite;
+        }
+        
+        .party-text {
+            color: red;
+            font-family: 'Poppins', sans-serif;
+            font-size: 2rem;
+            font-weight: 200;
+            letter-spacing: 8px;
+            margin-bottom: 60px;
+            text-transform: uppercase;
+        }
+        
+        .event-date {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #d4af37;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        .dj-lineup-main {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: white;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .dj-name {
+            color: #d4af37;
+            font-weight: 600;
+        }
+        
+        .surprise {
+            color: #ff6b6b;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .event-details {
+            font-size: 1rem;
+            font-weight: 300;
+            color: #ccc;
+            margin-bottom: 60px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            line-height: 1.8;
+        }
+        
+        .location {
+            background: rgba(212, 175, 55, 0.1);
+            border: 2px solid #d4af37;
+            padding: 20px 40px;
+            border-radius: 50px;
+            display: inline-block;
+            margin-bottom: 40px;
+        }
+        
+        .location-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #d4af37;
+            margin-bottom: 5px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        
+        .location-text {
+            font-size: 1.1rem;
+            color: #ffd700;
+            font-style: italic;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 30px 20px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .feature:hover {
+            transform: translateY(-5px);
+            border-color: #d4af37;
+            box-shadow: 0 15px 30px rgba(212, 175, 55, 0.2);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .feature-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #d4af37;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .feature-text {
+            font-size: 0.9rem;
+            color: #ccc;
+            line-height: 1.5;
+        }
+        
+        @keyframes bottleFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            33% { transform: translateY(-8px) rotate(1deg); }
+            66% { transform: translateY(-4px) rotate(-1deg); }
+        }
+        
+        @keyframes splashEffect {
+            0%, 70%, 100% { opacity: 0; transform: translateX(-50%) scale(0.8); }
+            15%, 55% { opacity: 1; transform: translateX(-50%) scale(1.2); }
+        }
+        
+        @keyframes splashPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+        
+        @keyframes goldShine {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .floating-bubbles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .bubble {
+            position: absolute;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 50%;
+            animation: bubbleFloat 8s linear infinite;
+        }
+        
+        @keyframes bubbleFloat {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) scale(1);
+                opacity: 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 4rem;
+            }
+            
+            .party-text {
+                font-size: 1.5rem;
+                letter-spacing: 4px;
+            }
+            
+            .bottle {
+                width: 40px;
+                height: 120px;
+                margin: 0 8px;
+            }
+            
+            .champagne-bottles {
+                height: 140px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .container {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-texture"></div>
+    <div class="splash-effects"></div>
+    
+    <div class="floating-bubbles" id="bubbles"></div>
+    
+    <div class="container">
+        <div class="presents-text">35th Birthday Celebration</div>
+        
+        <div class="champagne-bottles">
+            <div class="bottle" style="--delay: 0s;">
+                <div class="splash" style="--delay: 0s;"></div>
+            </div>
+            <div class="bottle" style="--delay: 0.5s;">
+                <div class="splash" style="--delay: 0.5s;"></div>
+            </div>
+            <div class="bottle" style="--delay: 1s;">
+                <div class="splash" style="--delay: 1s;"></div>
+            </div>
+        </div>
+        
+        <h1 class="main-title">Bellini Fest</h1>
+        <br>
+
+        <div class="party-text">Paint the town red, red attire and accessories encouraged</div>
+        
+        <div class="event-date">Friday October 3rd</div>
+        
+        <div class="dj-lineup-main">
+            <span class="dj-name">DJ Clarita</span> | <span class="dj-name">DJ Juan Vasquez</span> | <span class="surprise">TBD</span><br>
+            9PM - 3AM | Open Bar | Exclusive Show
+        </div>
+        <br />
+        <div class="event-details">
+            Free Drinks | Finger Foods | 6 Hours Non-Stop Music
+        </div>
+        
+        <div class="location">
+            <div class="location-title">Venue</div>
+            <div class="location-text">Location TBD</div>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature">
+                <div class="feature-icon">🥂</div>
+                <div class="feature-title">Open Bar</div>
+                <div class="feature-text">Premium cocktails and signature bellinis all night long</div>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">🎵</div>
+                <div class="feature-title">DJ Lineup</div>
+                <div class="feature-text">Clarita (9-11pm)<br>?????? (11pm-12am)<br>Juan Vasquez (12-1am)<br>TBD (1-3am)</div>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">🍤</div>
+                <div class="feature-title">Gourmet Bites</div>
+                <div class="feature-text">Carefully curated snacks and finger foods throughout the night</div>
+            </div>
+            
+            <!-- <div class="feature"> -->
+                <!-- <div class="feature-icon">✨</div> -->
+                <!-- <div class="feature-title">TBD</div> -->
+                <!-- <div class="feature-text">Mystery DJ taking over from 11pm-12am for an exclusive performance</div> -->
+            <!-- </div> -->
+        </div>
+    </div>
+    
+    <script>
+        // Create floating bubbles
+        function createBubble() {
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            
+            const size = Math.random() * 15 + 5;
+            bubble.style.width = size + 'px';
+            bubble.style.height = size + 'px';
+            bubble.style.left = Math.random() * 100 + '%';
+            bubble.style.animationDuration = (Math.random() * 6 + 8) + 's';
+            bubble.style.animationDelay = Math.random() * 2 + 's';
+            
+            document.getElementById('bubbles').appendChild(bubble);
+            
+            setTimeout(() => {
+                bubble.remove();
+            }, 10000);
+        }
+        
+        // Generate bubbles
+        setInterval(createBubble, 1000);
+        
+        // Initial bubbles
+        for (let i = 0; i < 10; i++) {
+            setTimeout(createBubble, i * 200);
+        }
+        
+        // Add sparkle effects on hover
+        function createSparkle(x, y) {
+            const sparkle = document.createElement('div');
+            sparkle.style.position = 'fixed';
+            sparkle.style.pointerEvents = 'none';
+            sparkle.style.width = '3px';
+            sparkle.style.height = '3px';
+            sparkle.style.background = '#d4af37';
+            sparkle.style.borderRadius = '50%';
+            sparkle.style.boxShadow = '0 0 6px #d4af37';
+            sparkle.style.left = x + Math.random() * 40 - 20 + 'px';
+            sparkle.style.top = y + Math.random() * 40 - 20 + 'px';
+            sparkle.style.opacity = '1';
+            sparkle.style.transition = 'all 1.5s ease-out';
+            sparkle.style.zIndex = '10';
+            
+            document.body.appendChild(sparkle);
+            
+            setTimeout(() => {
+                sparkle.style.opacity = '0';
+                sparkle.style.transform = 'translateY(-20px) scale(0)';
+            }, 100);
+            
+            setTimeout(() => {
+                document.body.removeChild(sparkle);
+            }, 1600);
+        }
+        
+        document.querySelectorAll('.feature').forEach(feature => {
+            feature.addEventListener('mouseenter', (e) => {
+                const rect = e.target.getBoundingClientRect();
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        createSparkle(
+                            rect.left + Math.random() * rect.width,
+                            rect.top + Math.random() * rect.height
+                        );
+                    }, i * 100);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
